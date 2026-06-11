@@ -1,0 +1,1443 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Package Creation Pricing</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap");
+
+    :root {
+      color-scheme: light;
+      --ui-primary: #0a4e90;
+      --ui-primary-dark: #083d71;
+      --luxbali-page-bg: #e9e9e9;
+      --ink: #0f172a;
+      --muted: #71717a;
+      --line: #e4e4e7;
+      --paper: var(--luxbali-page-bg);
+      --surface: #ffffff;
+      --surface-strong: #eff6ff;
+      --primary: var(--ui-primary);
+      --primary-dark: var(--ui-primary-dark);
+      --danger: #dc2626;
+      --warning: #f97316;
+      --shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+      --shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Geist", "Outfit", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid rgba(228, 228, 231, 0.8);
+    }
+
+    .topbar-inner {
+      width: min(1380px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 22px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .brand-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 126px;
+      height: auto;
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(24px, 3vw, 38px);
+      line-height: 1.1;
+      font-weight: 800;
+      color: #0f172a;
+      font-family: "Outfit", "Geist", sans-serif;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      background: var(--surface-strong);
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: minmax(210px, 1.25fr) repeat(4, minmax(120px, 0.65fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .workspace {
+      width: min(1380px, calc(100% - 32px));
+      margin: 24px auto 48px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 390px);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .main-panel,
+    .summary-panel,
+    .drawer {
+      box-shadow: var(--shadow);
+    }
+
+    .main-panel,
+    .summary-panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-bottom: 1px solid var(--line);
+      background: #fafafa;
+    }
+
+    .tab-button {
+      min-height: 58px;
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .tab-button:last-child {
+      border-right: 0;
+    }
+
+    .tab-button[aria-selected="true"] {
+      color: var(--primary);
+      background: #ffffff;
+      box-shadow: inset 0 -3px 0 var(--primary);
+    }
+
+    .tab-panel {
+      display: none;
+      padding: 20px;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .panel-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .panel-heading h2,
+    .summary-title h2 {
+      font-size: 21px;
+      line-height: 1.2;
+      font-weight: 700;
+      font-family: "Outfit", "Geist", sans-serif;
+    }
+
+    .panel-total {
+      color: var(--primary);
+      font-size: 22px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .form-grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .field label,
+    .field-label {
+      color: #52525b;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid #d4d4d8;
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      color: var(--ink);
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(10, 78, 144, 0.14);
+    }
+
+    .section-line {
+      height: 1px;
+      background: var(--line);
+      margin: 20px 0;
+    }
+
+    .hotel-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .hotel-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .hotel-card-header {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      background: #fafafa;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hotel-title-field {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .hotel-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .hotel-card-total {
+      min-width: 118px;
+      color: var(--primary);
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .hotel-body {
+      display: grid;
+      gap: 16px;
+      padding: 14px;
+    }
+
+    .hotel-body.collapsed {
+      display: none;
+    }
+
+    .button-small,
+    .icon-button {
+      min-height: 38px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #d4d4d8;
+      background: #ffffff;
+      color: var(--ink);
+      font-weight: 600;
+      padding: 8px 10px;
+    }
+
+    .button-small:hover,
+    .icon-button:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .icon-button {
+      width: 38px;
+      padding: 0;
+      display: inline-grid;
+      place-items: center;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .button-danger:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .rate-grid {
+      display: grid;
+      grid-template-columns: minmax(118px, 1fr) 92px minmax(136px, 0.8fr) minmax(150px, 1fr) minmax(138px, 1fr);
+      gap: 10px;
+      align-items: end;
+    }
+
+    .rate-row {
+      display: contents;
+    }
+
+    .rate-name {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      color: #18181b;
+      font-weight: 700;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .toggle-row:last-child {
+      border-bottom: 0;
+    }
+
+    .toggle-copy {
+      display: grid;
+      gap: 2px;
+    }
+
+    .toggle-copy strong {
+      color: #18181b;
+    }
+
+    .toggle-copy span,
+    .small-note {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .switch {
+      width: 50px;
+      height: 28px;
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      min-height: 0;
+      padding: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: #d4d4d8;
+      transition: 160ms ease;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+      transition: 160ms ease;
+    }
+
+    .switch input:checked + .slider {
+      background: var(--primary);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(22px);
+    }
+
+    .summary-panel {
+      position: sticky;
+      top: 16px;
+    }
+
+    .summary-title {
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .summary-body {
+      padding: 18px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .money-big {
+      color: var(--primary);
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 900;
+      text-align: right;
+    }
+
+    .breakdown {
+      display: grid;
+      gap: 9px;
+    }
+
+    .breakdown-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: #3f3f46;
+    }
+
+    .breakdown-row strong {
+      color: #0f172a;
+    }
+
+    .breakdown-row.accent {
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      font-size: 17px;
+    }
+
+    .adjustments {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .button-primary,
+    .button-secondary {
+      min-height: 44px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      border: 1px solid transparent;
+      padding: 10px 12px;
+    }
+
+    .button-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .button-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .button-secondary {
+      background: #ffffff;
+      color: var(--ink);
+      border-color: #d4d4d8;
+    }
+
+    .button-secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .package-output {
+      display: none;
+      border: 1px solid #d4d4d8;
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      background: #fafafa;
+      color: #27272a;
+      white-space: pre-line;
+    }
+
+    .package-output.visible {
+      display: block;
+    }
+
+    .drawer {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      max-width: min(460px, calc(100vw - 36px));
+      padding: 14px 16px;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius);
+      background: #eff6ff;
+      color: var(--primary);
+      font-weight: 600;
+      transform: translateY(140%);
+      transition: 180ms ease;
+    }
+
+    .drawer.visible {
+      transform: translateY(0);
+    }
+
+    .hotel-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      background: #fafafa;
+    }
+
+    .metric b {
+      display: block;
+      color: #0f172a;
+      font-size: 15px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    @media (max-width: 1080px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-panel {
+        position: static;
+      }
+
+      .setup-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .setup-grid .field:first-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar-inner,
+      .workspace {
+        width: min(100% - 22px, 1380px);
+      }
+
+      .tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tab-button {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .form-grid,
+      .form-grid.three,
+      .setup-grid,
+      .adjustments,
+      .actions,
+      .hotel-meta,
+      .hotel-card-header {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-actions,
+      .hotel-card-actions {
+        justify-content: flex-start;
+      }
+
+      .rate-grid {
+        grid-template-columns: 1fr 92px;
+        gap: 8px 10px;
+      }
+
+      .rate-row {
+        display: grid;
+        grid-template-columns: 1fr 92px;
+        grid-column: 1 / -1;
+        gap: 8px 10px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .rate-row:last-child {
+        border-bottom: 0;
+      }
+
+      .rate-row .field:nth-child(3),
+      .rate-row .field:nth-child(4),
+      .rate-row .field:nth-child(5) {
+        grid-column: 1 / -1;
+      }
+
+      .rate-name {
+        align-items: end;
+      }
+
+      .panel-heading {
+        display: grid;
+      }
+
+      .brand-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .brand-logo {
+        width: 108px;
+      }
+
+      .panel-total,
+      .money-big {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand-line">
+          <div class="brand-title">
+            <img class="brand-logo" src="logo-luxbali.png" alt="LuxBali">
+            <h1>Package Creation Pricing</h1>
+          </div>
+          <div class="status-pill"><span id="guestStatus">0 guests</span><span id="nightStatus">1 night</span></div>
+        </div>
+
+        <div class="setup-grid">
+          <div class="field">
+            <label for="packageName">Package name</label>
+            <input id="packageName" type="text" value="Bali Signature Package">
+          </div>
+          <div class="field">
+            <label for="adultCount">Adults</label>
+            <input id="adultCount" type="number" min="0" step="1" value="2">
+          </div>
+          <div class="field">
+            <label for="childCount">Children</label>
+            <input id="childCount" type="number" min="0" step="1" value="0">
+          </div>
+          <div class="field">
+            <label for="infantCount">Infants</label>
+            <input id="infantCount" type="number" min="0" step="1" value="0">
+          </div>
+          <div class="field">
+            <label for="nightCount">Nights</label>
+            <input id="nightCount" type="number" min="1" step="1" value="3">
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="main-panel" aria-label="Package components">
+        <nav class="tabs" aria-label="Pricing tabs">
+          <button class="tab-button" type="button" role="tab" aria-selected="true" aria-controls="tab-accommodation" data-tab="accommodation">Accommodation</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-visa" data-tab="visa">VISA</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-activity" data-tab="activity">Activity</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-transport" data-tab="transport">Transportation</button>
+        </nav>
+
+        <div id="tab-accommodation" class="tab-panel active" role="tabpanel">
+          <div class="panel-heading">
+            <div>
+              <h2>Accommodation / Hotel</h2>
+              <p class="small-note">Add one or more hotels and edit each hotel detail below.</p>
+            </div>
+            <div class="panel-actions">
+              <div class="panel-total" id="accommodationTotal">IDR 0</div>
+              <button class="button-primary" type="button" id="addHotelBtn">+ Add hotel</button>
+            </div>
+          </div>
+
+          <div class="hotel-list" id="hotelList" aria-live="polite"></div>
+        </div>
+
+        <div id="tab-visa" class="tab-panel" role="tabpanel">
+          <div class="panel-heading">
+            <div>
+              <h2>VISA</h2>
+              <p class="small-note">Guest quantity follows the package setup.</p>
+            </div>
+            <div class="panel-total" id="visaTotal">IDR 0</div>
+          </div>
+
+          <div class="form-grid three">
+            <div class="field">
+              <label for="visaType">Visa type</label>
+              <select id="visaType"></select>
+            </div>
+            <div class="field">
+              <label for="visaFee">Fee / guest</label>
+              <input id="visaFee" type="number" min="0" step="1000">
+            </div>
+            <div class="field">
+              <label for="visaServiceFee">Service fee</label>
+              <input id="visaServiceFee" type="number" min="0" step="1000" value="150000">
+            </div>
+          </div>
+
+          <div class="section-line"></div>
+
+          <div class="toggle-row">
+            <div class="toggle-copy">
+              <strong>Express handling</strong>
+              <span>IDR 200,000 / guest</span>
+            </div>
+            <label class="switch" aria-label="Express handling">
+              <input id="visaExpress" type="checkbox">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div id="tab-activity" class="tab-panel" role="tabpanel">
+          <div class="panel-heading">
+            <div>
+              <h2>Activity</h2>
+              <p class="small-note">Selected activities are multiplied by total guests.</p>
+            </div>
+            <div class="panel-total" id="activityTotal">IDR 0</div>
+          </div>
+
+          <div id="activityList"></div>
+
+          <div class="section-line"></div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="privateGuideFee">Private guide fee</label>
+              <input id="privateGuideFee" type="number" min="0" step="1000" value="650000">
+            </div>
+            <div class="field">
+              <label for="activityBuffer">Activity buffer</label>
+              <select id="activityBuffer">
+                <option value="0">No buffer</option>
+                <option value="5">5%</option>
+                <option value="10" selected>10%</option>
+                <option value="15">15%</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-transport" class="tab-panel" role="tabpanel">
+          <div class="panel-heading">
+            <div>
+              <h2>Transportation</h2>
+              <p class="small-note">Vehicle capacity is shown to help match the group size.</p>
+            </div>
+            <div class="panel-total" id="transportTotal">IDR 0</div>
+          </div>
+
+          <div class="form-grid three">
+            <div class="field">
+              <label for="vehicleType">Vehicle</label>
+              <select id="vehicleType"></select>
+            </div>
+            <div class="field">
+              <label for="vehicleQty">Vehicles</label>
+              <input id="vehicleQty" type="number" min="1" step="1" value="1">
+            </div>
+            <div class="field">
+              <label for="transportDays">Days</label>
+              <input id="transportDays" type="number" min="1" step="1" value="3">
+            </div>
+          </div>
+
+          <div class="section-line"></div>
+
+          <div class="form-grid three">
+            <div class="field">
+              <label for="vehicleRate">Rate / day</label>
+              <input id="vehicleRate" type="number" min="0" step="1000">
+            </div>
+            <div class="field">
+              <label for="airportTransferFee">Airport transfer</label>
+              <input id="airportTransferFee" type="number" min="0" step="1000" value="450000">
+            </div>
+            <div class="field">
+              <label for="parkingFuelFee">Parking & fuel</label>
+              <input id="parkingFuelFee" type="number" min="0" step="1000" value="300000">
+            </div>
+          </div>
+
+          <div class="section-line"></div>
+
+          <div class="toggle-row">
+            <div class="toggle-copy">
+              <strong>Include airport transfer</strong>
+              <span>Applied once per package.</span>
+            </div>
+            <label class="switch" aria-label="Include airport transfer">
+              <input id="includeAirportTransfer" type="checkbox" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <aside class="summary-panel" aria-label="Package summary">
+        <div class="summary-title">
+          <div>
+            <h2>Package Ready</h2>
+            <p class="small-note" id="summaryGuestLine">2 guests, 3 nights</p>
+          </div>
+          <div class="money-big" id="grandTotal">IDR 0</div>
+        </div>
+
+        <div class="summary-body">
+          <div class="breakdown">
+            <div class="breakdown-row"><span>Accommodation</span><strong id="sumAccommodation">IDR 0</strong></div>
+            <div class="breakdown-row"><span>VISA</span><strong id="sumVisa">IDR 0</strong></div>
+            <div class="breakdown-row"><span>Activity</span><strong id="sumActivity">IDR 0</strong></div>
+            <div class="breakdown-row"><span>Transportation</span><strong id="sumTransport">IDR 0</strong></div>
+            <div class="breakdown-row"><span>Cost subtotal</span><strong id="costSubtotal">IDR 0</strong></div>
+          </div>
+
+          <div class="adjustments">
+            <div class="field">
+              <label for="markupPercent">Markup %</label>
+              <input id="markupPercent" type="number" min="0" step="1" value="20">
+            </div>
+            <div class="field">
+              <label for="contingencyPercent">Contingency %</label>
+              <input id="contingencyPercent" type="number" min="0" step="1" value="5">
+            </div>
+          </div>
+
+          <div class="breakdown">
+            <div class="breakdown-row"><span>Markup</span><strong id="markupTotal">IDR 0</strong></div>
+            <div class="breakdown-row"><span>Contingency</span><strong id="contingencyTotal">IDR 0</strong></div>
+            <div class="breakdown-row accent"><span>Price / guest</span><strong id="pricePerGuest">IDR 0</strong></div>
+          </div>
+
+          <div class="actions">
+            <button class="button-primary" type="button" id="createPackageBtn">Create package</button>
+            <button class="button-secondary" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="package-output" id="packageOutput" aria-live="polite"></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="drawer" id="toast" role="status" aria-live="polite">Package summary updated.</div>
+
+  <script>
+    const accommodationList = [
+      {
+        id: "samaya-ubud",
+        name: "Samaya Ubud",
+        stars: 5,
+        roomCategories: ["Hill View Suite", "Ayung Villa", "Royal Courtyard Villa"],
+        rates: { single: 2100000, double: 2400000, tripleA: 2950000, tripleB: 2800000, childNoBed: 750000 }
+      },
+      {
+        id: "ayana-segara",
+        name: "Ayana Segara Bali",
+        stars: 5,
+        roomCategories: ["Resort View Room", "Ocean View Suite", "Segara Residence"],
+        rates: { single: 3300000, double: 3650000, tripleA: 4300000, tripleB: 4100000, childNoBed: 950000 }
+      },
+      {
+        id: "maya-sanur",
+        name: "Maya Sanur Resort",
+        stars: 5,
+        roomCategories: ["Deluxe Garden", "Lagoon Access", "Beachfront Suite"],
+        rates: { single: 1850000, double: 2150000, tripleA: 2700000, tripleB: 2550000, childNoBed: 625000 }
+      },
+      {
+        id: "sankara-seminyak",
+        name: "Sankara Seminyak",
+        stars: 4,
+        roomCategories: ["Superior Room", "Deluxe Pool View", "Two Bedroom Suite"],
+        rates: { single: 1350000, double: 1600000, tripleA: 2100000, tripleB: 1980000, childNoBed: 450000 }
+      }
+    ];
+
+    const visaList = [
+      { id: "voa", name: "Visa on Arrival", fee: 500000 },
+      { id: "b211a", name: "B211A Visit Visa", fee: 1650000 },
+      { id: "kitas", name: "Limited Stay Permit", fee: 4200000 }
+    ];
+
+    const activityList = [
+      { id: "ubud-tour", name: "Ubud culture day", price: 450000, selected: true },
+      { id: "water-sport", name: "Tanjung Benoa water sport", price: 700000, selected: false },
+      { id: "nusa-penida", name: "Nusa Penida island trip", price: 950000, selected: true },
+      { id: "spa", name: "Balinese spa ritual", price: 375000, selected: false }
+    ];
+
+    const vehicleList = [
+      { id: "avanza", name: "Toyota Avanza", capacity: 4, rate: 700000 },
+      { id: "hiace", name: "Toyota HiAce", capacity: 12, rate: 1450000 },
+      { id: "elf", name: "Isuzu ELF", capacity: 18, rate: 1900000 },
+      { id: "bus", name: "Medium Bus", capacity: 30, rate: 2850000 }
+    ];
+
+    const roomTypes = [
+      { key: "single", label: "Single", defaultUnits: 0, linkable: true },
+      { key: "double", label: "Double", defaultUnits: 1, linkable: true },
+      { key: "tripleA", label: "Triple A (3 Adult)", defaultUnits: 0, linkable: true },
+      { key: "tripleB", label: "Triple B (2 Adult + 1 Child)", defaultUnits: 0, linkable: true },
+      { key: "childNoBed", label: "Child No Bed", defaultUnits: 0, linkable: false }
+    ];
+
+    const state = {
+      hotelCounter: 0,
+      hotelIds: [],
+      totals: {
+        accommodation: 0,
+        visa: 0,
+        activity: 0,
+        transport: 0,
+        subtotal: 0,
+        markup: 0,
+        contingency: 0,
+        grand: 0,
+        perGuest: 0
+      }
+    };
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    function numberValue(id) {
+      const value = Number($(id).value);
+      return Number.isFinite(value) ? value : 0;
+    }
+
+    function clampNumber(value, min = 0) {
+      return Math.max(min, Number.isFinite(value) ? value : min);
+    }
+
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 0
+      }).format(Math.round(value || 0));
+    }
+
+    function totalGuests() {
+      return numberValue("#adultCount") + numberValue("#childCount") + numberValue("#infantCount");
+    }
+
+    function chargeableGuests() {
+      return numberValue("#adultCount") + numberValue("#childCount");
+    }
+
+    function selectedHotelById(hotelId) {
+      return accommodationList.find((hotel) => hotel.id === hotelId) || accommodationList[0];
+    }
+
+    function selectedVisa() {
+      return visaList.find((visa) => visa.id === $("#visaType").value) || visaList[0];
+    }
+
+    function selectedVehicle() {
+      return vehicleList.find((vehicle) => vehicle.id === $("#vehicleType").value) || vehicleList[0];
+    }
+
+    function initOptions() {
+      $("#visaType").innerHTML = visaList
+        .map((visa) => `<option value="${visa.id}">${visa.name}</option>`)
+        .join("");
+
+      $("#vehicleType").innerHTML = vehicleList
+        .map((vehicle) => `<option value="${vehicle.id}">${vehicle.name} - ${vehicle.capacity} pax</option>`)
+        .join("");
+    }
+
+    function hotelOptionMarkup(selectedId = accommodationList[0].id) {
+      return accommodationList
+        .map((hotel) => `<option value="${hotel.id}" ${hotel.id === selectedId ? "selected" : ""}>${hotel.name}</option>`)
+        .join("");
+    }
+
+    function roomCategoryMarkup(hotel, selectedCategory = hotel.roomCategories[0]) {
+      return hotel.roomCategories
+        .map((category) => `<option value="${category}" ${category === selectedCategory ? "selected" : ""}>${category}</option>`)
+        .join("");
+    }
+
+    function starOptions(selectedStars = 5) {
+      return [1, 2, 3, 4, 5]
+        .map((stars) => `<option value="${stars}" ${stars === Number(selectedStars) ? "selected" : ""}>${stars} Star${stars > 1 ? "s" : ""}</option>`)
+        .join("");
+    }
+
+    function mealPlanOptions(selectedValue = "0") {
+      return [
+        ["0", "Room only"],
+        ["125000", "Breakfast - IDR 125,000 / guest / night"],
+        ["260000", "Half board - IDR 260,000 / guest / night"]
+      ].map(([value, label]) => `<option value="${value}" ${value === String(selectedValue) ? "selected" : ""}>${label}</option>`).join("");
+    }
+
+    function roomLinkOptions(selectedKey = "double") {
+      const options = roomTypes.filter((room) => room.linkable);
+      return options
+        .map((room) => `<option value="${room.key}" ${room.key === selectedKey ? "selected" : ""}>${room.label}</option>`)
+        .join("");
+    }
+
+    function hotelCards() {
+      return Array.from(document.querySelectorAll(".hotel-card"));
+    }
+
+    function addHotel(silent = false) {
+      const id = `hotel-${state.hotelCounter + 1}`;
+      state.hotelCounter += 1;
+      state.hotelIds.push(id);
+      $("#hotelList").appendChild(renderHotelCard(id));
+      applyHotelDefaults($(`[data-hotel-id="${id}"]`));
+      calculate();
+      if (!silent) showToast("Hotel added.");
+    }
+
+    function renderHotelCard(id) {
+      const hotel = accommodationList[0];
+      const card = document.createElement("section");
+      card.className = "hotel-card";
+      card.dataset.hotelId = id;
+      card.innerHTML = `
+        <div class="hotel-card-header">
+          <div class="hotel-title-field">
+            <label class="field-label" for="${id}-name">Hotel name</label>
+            <input id="${id}-name" type="text" data-hotel-name value="Hotel ${state.hotelCounter}">
+          </div>
+          <div class="hotel-card-actions">
+            <div class="hotel-card-total" data-hotel-total>${formatCurrency(0)}</div>
+            <button class="icon-button" type="button" data-toggle-hotel title="Show or hide hotel detail" aria-label="Show or hide hotel detail">^</button>
+            <button class="icon-button button-danger" type="button" data-remove-hotel title="Remove hotel" aria-label="Remove hotel">x</button>
+          </div>
+        </div>
+
+        <div class="hotel-body">
+          <div class="form-grid three">
+            <div class="field">
+              <label for="${id}-select">Select hotel</label>
+              <select id="${id}-select" data-hotel-select>${hotelOptionMarkup(hotel.id)}</select>
+            </div>
+            <div class="field">
+              <label for="${id}-category">Room category</label>
+              <select id="${id}-category" data-room-category>${roomCategoryMarkup(hotel)}</select>
+            </div>
+            <div class="field">
+              <label for="${id}-stars">Stars</label>
+              <select id="${id}-stars" data-hotel-stars>${starOptions(hotel.stars)}</select>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="${id}-meal">Meal plan</label>
+              <select id="${id}-meal" data-meal-plan>${mealPlanOptions()}</select>
+            </div>
+            <div class="field">
+              <label for="${id}-nights">Nights</label>
+              <input id="${id}-nights" type="number" min="1" step="1" data-hotel-nights value="${clampNumber(numberValue("#nightCount"), 1)}">
+            </div>
+          </div>
+
+          <div class="rate-grid" data-rate-grid>
+            <div class="field-label">Rate type</div>
+            <div class="field-label">Units</div>
+            <div class="field-label">Rate / night</div>
+            <div class="field-label">Room category</div>
+            <div class="field-label">Connected rate</div>
+            ${roomTypes.map((room) => `
+              <div class="rate-row" data-rate-row="${room.key}">
+                <div class="rate-name">${room.label}</div>
+                <div class="field">
+                  <label class="field-label" for="${id}-${room.key}-units">Units</label>
+                  <input id="${id}-${room.key}-units" type="number" min="0" step="1" data-rate-units="${room.key}" value="${room.defaultUnits}">
+                </div>
+                <div class="field">
+                  <label class="field-label" for="${id}-${room.key}-rate">Rate</label>
+                  <input id="${id}-${room.key}-rate" type="number" min="0" step="1000" data-rate-value="${room.key}">
+                </div>
+                <div class="field">
+                  <label class="field-label" for="${id}-${room.key}-category">Category</label>
+                  <select id="${id}-${room.key}-category" data-rate-category="${room.key}">${roomCategoryMarkup(hotel)}</select>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="${id}-${room.key}-link">Connect</label>
+                  ${room.key === "childNoBed"
+                    ? `<select id="${id}-${room.key}-link" data-child-rate-link>${roomLinkOptions()}</select>`
+                    : `<input id="${id}-${room.key}-link" value="Direct" disabled>`}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function applyHotelDefaults(card) {
+      if (!card) return;
+      const hotel = selectedHotelById(card.querySelector("[data-hotel-select]").value);
+      card.querySelector("[data-room-category]").innerHTML = roomCategoryMarkup(hotel);
+      card.querySelector("[data-hotel-stars]").value = String(hotel.stars);
+
+      roomTypes.forEach((room) => {
+        const rateInput = card.querySelector(`[data-rate-value="${room.key}"]`);
+        const categorySelect = card.querySelector(`[data-rate-category="${room.key}"]`);
+        if (rateInput) rateInput.value = hotel.rates[room.key] || 0;
+        if (categorySelect) categorySelect.innerHTML = roomCategoryMarkup(hotel);
+      });
+
+      updateChildRateFromLinked(card);
+      calculate();
+    }
+
+    function updateChildRateFromLinked(card) {
+      const linkSelect = card?.querySelector("[data-child-rate-link]");
+      const childRate = card?.querySelector('[data-rate-value="childNoBed"]');
+      if (!linkSelect || !childRate) return;
+      const linkedRate = card.querySelector(`[data-rate-value="${linkSelect.value}"]`);
+      if (linkedRate) childRate.value = linkedRate.value;
+    }
+
+    function hotelTotal(card) {
+      const nights = clampNumber(Number(card.querySelector("[data-hotel-nights]").value), 1);
+      const mealCost = Number(card.querySelector("[data-meal-plan]").value) * chargeableGuests() * nights;
+      const roomCost = roomTypes.reduce((sum, room) => {
+        const units = clampNumber(Number(card.querySelector(`[data-rate-units="${room.key}"]`).value));
+        const rate = clampNumber(Number(card.querySelector(`[data-rate-value="${room.key}"]`).value));
+        return sum + units * rate * nights;
+      }, 0);
+      const total = roomCost + mealCost;
+      card.querySelector("[data-hotel-total]").textContent = formatCurrency(total);
+      return total;
+    }
+
+    function accommodationTotal() {
+      return hotelCards().reduce((sum, card) => sum + hotelTotal(card), 0);
+    }
+
+    function initActivities() {
+      $("#activityList").innerHTML = activityList.map((activity) => `
+        <div class="toggle-row">
+          <div class="toggle-copy">
+            <strong>${activity.name}</strong>
+            <span>${formatCurrency(activity.price)} / guest</span>
+          </div>
+          <label class="switch" aria-label="${activity.name}">
+            <input type="checkbox" data-activity="${activity.id}" ${activity.selected ? "checked" : ""}>
+            <span class="slider"></span>
+          </label>
+        </div>
+      `).join("");
+    }
+
+    function applyVisaDefaults() {
+      $("#visaFee").value = selectedVisa().fee;
+      calculate();
+    }
+
+    function applyVehicleDefaults() {
+      $("#vehicleRate").value = selectedVehicle().rate;
+      calculate();
+    }
+
+    function visaTotal() {
+      const guests = chargeableGuests();
+      const fee = clampNumber(numberValue("#visaFee"));
+      const serviceFee = clampNumber(numberValue("#visaServiceFee"));
+      const express = $("#visaExpress").checked ? 200000 * guests : 0;
+      return fee * guests + serviceFee + express;
+    }
+
+    function activityTotal() {
+      const guests = chargeableGuests();
+      const base = activityList.reduce((sum, activity) => {
+        const checked = $(`[data-activity="${activity.id}"]`)?.checked;
+        return checked ? sum + activity.price * guests : sum;
+      }, 0);
+      const guide = clampNumber(numberValue("#privateGuideFee"));
+      const bufferPercent = clampNumber(Number($("#activityBuffer").value));
+      return (base + guide) * (1 + bufferPercent / 100);
+    }
+
+    function transportTotal() {
+      const days = clampNumber(numberValue("#transportDays"), 1);
+      const qty = clampNumber(numberValue("#vehicleQty"), 1);
+      const rate = clampNumber(numberValue("#vehicleRate"));
+      const airport = $("#includeAirportTransfer").checked ? clampNumber(numberValue("#airportTransferFee")) : 0;
+      const parkingFuel = clampNumber(numberValue("#parkingFuelFee"));
+      return rate * qty * days + airport + parkingFuel;
+    }
+
+    function calculate() {
+      const guests = totalGuests();
+      const nights = clampNumber(numberValue("#nightCount"), 1);
+      state.totals.accommodation = accommodationTotal();
+      state.totals.visa = visaTotal();
+      state.totals.activity = activityTotal();
+      state.totals.transport = transportTotal();
+      state.totals.subtotal = state.totals.accommodation + state.totals.visa + state.totals.activity + state.totals.transport;
+      state.totals.markup = state.totals.subtotal * (clampNumber(numberValue("#markupPercent")) / 100);
+      state.totals.contingency = state.totals.subtotal * (clampNumber(numberValue("#contingencyPercent")) / 100);
+      state.totals.grand = state.totals.subtotal + state.totals.markup + state.totals.contingency;
+      state.totals.perGuest = chargeableGuests() > 0 ? state.totals.grand / chargeableGuests() : 0;
+
+      $("#guestStatus").textContent = `${guests} ${guests === 1 ? "guest" : "guests"}`;
+      $("#nightStatus").textContent = `${nights} ${nights === 1 ? "night" : "nights"}`;
+      $("#summaryGuestLine").textContent = `${chargeableGuests()} chargeable guests, ${nights} ${nights === 1 ? "night" : "nights"}`;
+
+      $("#accommodationTotal").textContent = formatCurrency(state.totals.accommodation);
+      $("#visaTotal").textContent = formatCurrency(state.totals.visa);
+      $("#activityTotal").textContent = formatCurrency(state.totals.activity);
+      $("#transportTotal").textContent = formatCurrency(state.totals.transport);
+      $("#sumAccommodation").textContent = formatCurrency(state.totals.accommodation);
+      $("#sumVisa").textContent = formatCurrency(state.totals.visa);
+      $("#sumActivity").textContent = formatCurrency(state.totals.activity);
+      $("#sumTransport").textContent = formatCurrency(state.totals.transport);
+      $("#costSubtotal").textContent = formatCurrency(state.totals.subtotal);
+      $("#markupTotal").textContent = formatCurrency(state.totals.markup);
+      $("#contingencyTotal").textContent = formatCurrency(state.totals.contingency);
+      $("#grandTotal").textContent = formatCurrency(state.totals.grand);
+      $("#pricePerGuest").textContent = formatCurrency(state.totals.perGuest);
+    }
+
+    function createPackageSummary() {
+      calculate();
+      const vehicle = selectedVehicle();
+      const hotelSummary = hotelCards()
+        .map((card, index) => {
+          const selected = selectedHotelById(card.querySelector("[data-hotel-select]").value);
+          const name = card.querySelector("[data-hotel-name]").value || `Hotel ${index + 1}`;
+          const category = card.querySelector("[data-room-category]").value;
+          const stars = card.querySelector("[data-hotel-stars]").value;
+          return `${name}: ${selected.name}, ${category}, ${stars} star`;
+        })
+        .join("; ") || "No hotel selected";
+      const selectedActivities = activityList
+        .filter((activity) => $(`[data-activity="${activity.id}"]`)?.checked)
+        .map((activity) => activity.name)
+        .join(", ") || "No activity selected";
+
+      const lines = [
+        $("#packageName").value || "Untitled Package",
+        `${chargeableGuests()} chargeable guests, ${numberValue("#nightCount")} nights`,
+        `Hotels: ${hotelSummary}`,
+        `Visa: ${selectedVisa().name}`,
+        `Activities: ${selectedActivities}`,
+        `Transportation: ${vehicle.name} x ${numberValue("#vehicleQty")}`,
+        `Total package: ${formatCurrency(state.totals.grand)}`,
+        `Price per guest: ${formatCurrency(state.totals.perGuest)}`
+      ];
+
+      $("#packageOutput").textContent = lines.join("\n");
+      $("#packageOutput").classList.add("visible");
+      showToast("Package is ready.");
+    }
+
+    function resetForm() {
+      $("#packageName").value = "Bali Signature Package";
+      $("#adultCount").value = 2;
+      $("#childCount").value = 0;
+      $("#infantCount").value = 0;
+      $("#nightCount").value = 3;
+      $("#visaServiceFee").value = 150000;
+      $("#visaExpress").checked = false;
+      $("#privateGuideFee").value = 650000;
+      $("#activityBuffer").value = "10";
+      $("#vehicleQty").value = 1;
+      $("#transportDays").value = 3;
+      $("#airportTransferFee").value = 450000;
+      $("#parkingFuelFee").value = 300000;
+      $("#includeAirportTransfer").checked = true;
+      $("#packageOutput").classList.remove("visible");
+      state.hotelCounter = 0;
+      state.hotelIds = [];
+      $("#hotelList").innerHTML = "";
+      addHotel(true);
+      initActivities();
+      applyVisaDefaults();
+      applyVehicleDefaults();
+      calculate();
+      showToast("Pricing form reset.");
+    }
+
+    function showToast(message) {
+      const toast = $("#toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("visible"), 1900);
+    }
+
+    function bindEvents() {
+      $$(".tab-button").forEach((button) => {
+        button.addEventListener("click", () => {
+          const tab = button.dataset.tab;
+          $$(".tab-button").forEach((tabButton) => tabButton.setAttribute("aria-selected", String(tabButton === button)));
+          $$(".tab-panel").forEach((panel) => panel.classList.toggle("active", panel.id === `tab-${tab}`));
+        });
+      });
+
+      document.addEventListener("input", (event) => {
+        if (event.target.matches("input, select, textarea")) {
+          const card = event.target.closest?.(".hotel-card");
+          if (card && event.target.matches("[data-rate-value]")) {
+            const linkedKey = card.querySelector("[data-child-rate-link]")?.value;
+            if (event.target.dataset.rateValue === linkedKey) updateChildRateFromLinked(card);
+          }
+          calculate();
+        }
+      });
+
+      document.addEventListener("change", (event) => {
+        const card = event.target.closest?.(".hotel-card");
+        if (event.target.matches("[data-hotel-select]")) applyHotelDefaults(card);
+        if (event.target.matches("[data-child-rate-link]")) updateChildRateFromLinked(card);
+        if (event.target.id === "visaType") applyVisaDefaults();
+        if (event.target.id === "vehicleType") applyVehicleDefaults();
+        calculate();
+      });
+
+      document.addEventListener("click", (event) => {
+        const card = event.target.closest?.(".hotel-card");
+        if (event.target.matches("[data-toggle-hotel]")) {
+          const body = card.querySelector(".hotel-body");
+          const collapsed = body.classList.toggle("collapsed");
+          event.target.textContent = collapsed ? "v" : "^";
+          event.target.setAttribute("aria-expanded", String(!collapsed));
+        }
+
+        if (event.target.matches("[data-remove-hotel]")) {
+          if (hotelCards().length === 1) {
+            showToast("At least one hotel is required.");
+            return;
+          }
+          card.remove();
+          calculate();
+          showToast("Hotel removed.");
+        }
+      });
+
+      $("#addHotelBtn").addEventListener("click", addHotel);
+      $("#createPackageBtn").addEventListener("click", createPackageSummary);
+      $("#resetBtn").addEventListener("click", resetForm);
+    }
+
+    initOptions();
+    initActivities();
+    bindEvents();
+    addHotel(true);
+    applyVisaDefaults();
+    applyVehicleDefaults();
+    calculate();
+  </script>
+</body>
+</html>
