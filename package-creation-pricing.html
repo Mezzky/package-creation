@@ -98,20 +98,6 @@
       flex-wrap: wrap;
     }
 
-    .brand-title {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      min-width: 0;
-    }
-
-    .brand-logo {
-      width: 126px;
-      height: auto;
-      display: block;
-      flex: 0 0 auto;
-    }
-
     h1,
     h2,
     h3,
@@ -123,7 +109,7 @@
       font-size: clamp(24px, 3vw, 38px);
       line-height: 1.1;
       font-weight: 800;
-      color: #0f172a;
+      color: var(--ui-primary-dark);
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
@@ -143,7 +129,7 @@
 
     .setup-grid {
       display: grid;
-      grid-template-columns: minmax(210px, 1.25fr) repeat(4, minmax(120px, 0.65fr));
+      grid-template-columns: minmax(210px, 1.25fr) repeat(2, minmax(120px, 0.65fr));
       gap: 12px;
       align-items: end;
     }
@@ -273,6 +259,10 @@
       outline: none;
     }
 
+    select {
+      padding-right: 42px;
+    }
+
     textarea {
       min-height: 120px;
       resize: vertical;
@@ -377,7 +367,7 @@
 
     .rate-grid {
       display: grid;
-      grid-template-columns: minmax(118px, 1fr) 92px minmax(136px, 0.8fr) minmax(150px, 1fr) minmax(138px, 1fr);
+      grid-template-columns: minmax(140px, 1fr) minmax(136px, 0.8fr) minmax(150px, 1fr) minmax(160px, 1fr);
       gap: 10px;
       align-items: end;
     }
@@ -392,6 +382,18 @@
       align-items: center;
       color: #18181b;
       font-weight: 700;
+    }
+
+    .readonly-value {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: #fafafa;
+      color: #18181b;
+      padding: 10px 12px;
+      font-weight: 600;
     }
 
     .toggle-row {
@@ -699,13 +701,13 @@
       }
 
       .rate-grid {
-        grid-template-columns: 1fr 92px;
+        grid-template-columns: 1fr;
         gap: 8px 10px;
       }
 
       .rate-row {
         display: grid;
-        grid-template-columns: 1fr 92px;
+        grid-template-columns: 1fr;
         grid-column: 1 / -1;
         gap: 8px 10px;
         padding-bottom: 12px;
@@ -716,9 +718,7 @@
         border-bottom: 0;
       }
 
-      .rate-row .field:nth-child(3),
-      .rate-row .field:nth-child(4),
-      .rate-row .field:nth-child(5) {
+      .rate-row .field {
         grid-column: 1 / -1;
       }
 
@@ -728,15 +728,6 @@
 
       .panel-heading {
         display: grid;
-      }
-
-      .brand-title {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .brand-logo {
-        width: 108px;
       }
 
       .panel-total,
@@ -751,10 +742,7 @@
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand-line">
-          <div class="brand-title">
-            <img class="brand-logo" src="logo-luxbali.png" alt="LuxBali">
-            <h1>Package Creation Pricing</h1>
-          </div>
+          <h1>Package Creation Pricing</h1>
           <div class="status-pill"><span id="guestStatus">0 guests</span><span id="nightStatus">0 nights</span></div>
         </div>
 
@@ -764,16 +752,8 @@
             <input id="packageName" type="text" value="" autocomplete="off" required>
           </div>
           <div class="field">
-            <label for="adultCount">Adults</label>
-            <input id="adultCount" type="number" min="0" step="1" value="0" inputmode="numeric">
-          </div>
-          <div class="field">
-            <label for="childCount">Children</label>
-            <input id="childCount" type="number" min="0" step="1" value="0" inputmode="numeric">
-          </div>
-          <div class="field">
-            <label for="infantCount">Infants</label>
-            <input id="infantCount" type="number" min="0" step="1" value="0" inputmode="numeric">
+            <label for="guestCount">Guests</label>
+            <input id="guestCount" type="number" min="0" step="1" value="0" inputmode="numeric">
           </div>
           <div class="field">
             <label for="nightCount">Nights</label>
@@ -935,7 +915,7 @@
         <div class="summary-title">
           <div>
             <h2>Package Ready</h2>
-            <p class="small-note" id="summaryGuestLine">0 chargeable guests, 0 nights</p>
+            <p class="small-note" id="summaryGuestLine">0 guests, 0 nights</p>
           </div>
           <div class="money-big" id="grandTotal">IDR 0</div>
         </div>
@@ -992,28 +972,60 @@
         name: "Samaya Ubud",
         stars: 5,
         roomCategories: ["Hill View Suite", "Ayung Villa", "Royal Courtyard Villa"],
-        rates: { single: 2100000, double: 2400000, tripleA: 2950000, tripleB: 2800000, childNoBed: 750000 }
+        rates: { single: 2100000, double: 2400000, tripleA: 2950000, tripleB: 2800000, childNoBed: 750000 },
+        additionals: [
+          { id: "none", name: "No additional", price: 0 },
+          { id: "breakfast", name: "Breakfast", price: 125000 },
+          { id: "extra-bed", name: "Extra bed", price: 450000 }
+        ]
       },
       {
         id: "ayana-segara",
         name: "Ayana Segara Bali",
         stars: 5,
         roomCategories: ["Resort View Room", "Ocean View Suite", "Segara Residence"],
-        rates: { single: 3300000, double: 3650000, tripleA: 4300000, tripleB: 4100000, childNoBed: 950000 }
+        rates: { single: 3300000, double: 3650000, tripleA: 4300000, tripleB: 4100000, childNoBed: 950000 },
+        additionals: [
+          { id: "none", name: "No additional", price: 0 },
+          { id: "breakfast", name: "Breakfast", price: 175000 },
+          { id: "club-access", name: "Club access", price: 650000 }
+        ]
       },
       {
         id: "maya-sanur",
         name: "Maya Sanur Resort",
         stars: 5,
         roomCategories: ["Deluxe Garden", "Lagoon Access", "Beachfront Suite"],
-        rates: { single: 1850000, double: 2150000, tripleA: 2700000, tripleB: 2550000, childNoBed: 625000 }
+        rates: { single: 1850000, double: 2150000, tripleA: 2700000, tripleB: 2550000, childNoBed: 625000 },
+        additionals: [
+          { id: "none", name: "No additional", price: 0 },
+          { id: "breakfast", name: "Breakfast", price: 125000 },
+          { id: "airport-pickup", name: "Airport pickup", price: 350000 }
+        ]
       },
       {
         id: "sankara-seminyak",
         name: "Sankara Seminyak",
         stars: 4,
         roomCategories: ["Superior Room", "Deluxe Pool View", "Two Bedroom Suite"],
-        rates: { single: 1350000, double: 1600000, tripleA: 2100000, tripleB: 1980000, childNoBed: 450000 }
+        rates: { single: 1350000, double: 1600000, tripleA: 2100000, tripleB: 1980000, childNoBed: 450000 },
+        additionals: [
+          { id: "none", name: "No additional", price: 0 },
+          { id: "breakfast", name: "Breakfast", price: 95000 },
+          { id: "late-checkout", name: "Late checkout", price: 300000 }
+        ]
+      },
+      {
+        id: "sunset-kuta",
+        name: "Sunset Kuta Hotel",
+        stars: 3,
+        roomCategories: ["Standard Room", "Superior Room", "Family Room"],
+        rates: { single: 850000, double: 1050000, tripleA: 1450000, tripleB: 1325000, childNoBed: 250000 },
+        additionals: [
+          { id: "none", name: "No additional", price: 0 },
+          { id: "breakfast", name: "Breakfast", price: 75000 },
+          { id: "extra-bed", name: "Extra bed", price: 250000 }
+        ]
       }
     ];
 
@@ -1038,11 +1050,11 @@
     ];
 
     const roomTypes = [
-      { key: "single", label: "Single", defaultUnits: 0, linkable: true },
-      { key: "double", label: "Double", defaultUnits: 0, linkable: true },
-      { key: "tripleA", label: "Triple A (3 Adult)", defaultUnits: 0, linkable: true },
-      { key: "tripleB", label: "Triple B (2 Adult + 1 Child)", defaultUnits: 0, linkable: true },
-      { key: "childNoBed", label: "Child No Bed", defaultUnits: 0, linkable: false }
+      { key: "single", label: "Single" },
+      { key: "double", label: "Double" },
+      { key: "tripleA", label: "Triple A (3 Adult)" },
+      { key: "tripleB", label: "Triple B (2 Adult + 1 Child)" },
+      { key: "childNoBed", label: "Child No Bed" }
     ];
 
     const state = {
@@ -1082,11 +1094,11 @@
     }
 
     function totalGuests() {
-      return numberValue("#adultCount") + numberValue("#childCount") + numberValue("#infantCount");
+      return numberValue("#guestCount");
     }
 
     function chargeableGuests() {
-      return numberValue("#adultCount") + numberValue("#childCount");
+      return numberValue("#guestCount");
     }
 
     function selectedHotelById(hotelId) {
@@ -1141,12 +1153,8 @@
         .join("");
     }
 
-    function starOptions(selectedStars = "") {
-      return [
-        '<option value="">Select stars</option>',
-        ...[1, 2, 3, 4, 5].map((stars) => `<option value="${stars}" ${stars === Number(selectedStars) ? "selected" : ""}>${stars} Star${stars > 1 ? "s" : ""}</option>`)
-      ]
-        .join("");
+    function starLabel(stars) {
+      return stars ? `${stars} Star${Number(stars) > 1 ? "s" : ""}` : "-";
     }
 
     function mealPlanOptions(selectedValue = "0") {
@@ -1157,10 +1165,16 @@
       ].map(([value, label]) => `<option value="${value}" ${value === String(selectedValue) ? "selected" : ""}>${label}</option>`).join("");
     }
 
-    function roomLinkOptions(selectedKey = "double") {
-      const options = roomTypes.filter((room) => room.linkable);
-      return options
+    function pricingRateOptions(selectedKey = "double") {
+      return roomTypes
         .map((room) => `<option value="${room.key}" ${room.key === selectedKey ? "selected" : ""}>${room.label}</option>`)
+        .join("");
+    }
+
+    function additionalOptions(hotel, selectedId = "none") {
+      const items = hotel?.additionals?.length ? hotel.additionals : [{ id: "none", name: "No additional", price: 0 }];
+      return items
+        .map((item) => `<option value="${item.id}" data-additional-price="${item.price}" ${item.id === selectedId ? "selected" : ""}>${item.name} (${formatCurrency(item.price)})</option>`)
         .join("");
     }
 
@@ -1182,9 +1196,7 @@
 
       const saved = {
         packageName: $("#packageName").value,
-        adultCount: $("#adultCount").value,
-        childCount: $("#childCount").value,
-        infantCount: $("#infantCount").value,
+        guestCount: $("#guestCount").value,
         nightCount: $("#nightCount").value,
         visaType: $("#visaType").value,
         visaFee: $("#visaFee").value,
@@ -1211,15 +1223,14 @@
           name: card.querySelector("[data-hotel-name]").value,
           selectedHotel: card.querySelector("[data-hotel-select]").value,
           roomCategory: card.querySelector("[data-room-category]").value,
-          stars: card.querySelector("[data-hotel-stars]").value,
+          selectedRate: card.querySelector("[data-pricing-rate]").value,
           mealPlan: card.querySelector("[data-meal-plan]").value,
           nights: card.querySelector("[data-hotel-nights]").value,
-          childRateLink: card.querySelector("[data-child-rate-link]")?.value,
           rates: roomTypes.reduce((rates, room) => {
             rates[room.key] = {
-              units: card.querySelector(`[data-rate-units="${room.key}"]`).value,
               rate: card.querySelector(`[data-rate-value="${room.key}"]`).value,
-              category: card.querySelector(`[data-rate-category="${room.key}"]`).value
+              category: card.querySelector(`[data-rate-category="${room.key}"]`).value,
+              additional: card.querySelector(`[data-rate-additional="${room.key}"]`).value
             };
             return rates;
           }, {})
@@ -1237,20 +1248,17 @@
       card.querySelector("[data-hotel-select]").value = savedHotel.selectedHotel || "";
       if (savedHotel.selectedHotel) applyHotelDefaults(card);
       setFieldValue(`#${card.dataset.hotelId}-category`, savedHotel.roomCategory);
-      setFieldValue(`#${card.dataset.hotelId}-stars`, savedHotel.stars);
+      setFieldValue(`#${card.dataset.hotelId}-pricing-rate`, savedHotel.selectedRate);
       setFieldValue(`#${card.dataset.hotelId}-meal`, savedHotel.mealPlan);
       setFieldValue(`#${card.dataset.hotelId}-nights`, savedHotel.nights);
 
       roomTypes.forEach((room) => {
         const savedRate = savedHotel.rates?.[room.key];
         if (!savedRate) return;
-        card.querySelector(`[data-rate-units="${room.key}"]`).value = savedRate.units;
         card.querySelector(`[data-rate-value="${room.key}"]`).value = savedRate.rate;
         card.querySelector(`[data-rate-category="${room.key}"]`).value = savedRate.category;
+        card.querySelector(`[data-rate-additional="${room.key}"]`).value = savedRate.additional || "none";
       });
-
-      const childLink = card.querySelector("[data-child-rate-link]");
-      if (childLink && savedHotel.childRateLink) childLink.value = savedHotel.childRateLink;
     }
 
     function restoreState() {
@@ -1262,9 +1270,7 @@
         isRestoringState = true;
 
         setFieldValue("#packageName", saved.packageName);
-        setFieldValue("#adultCount", saved.adultCount);
-        setFieldValue("#childCount", saved.childCount);
-        setFieldValue("#infantCount", saved.infantCount);
+        setFieldValue("#guestCount", saved.guestCount ?? 0);
         setFieldValue("#nightCount", saved.nightCount);
         setFieldValue("#visaType", saved.visaType);
         applyVisaDefaults();
@@ -1338,48 +1344,42 @@
               <select id="${id}-category" data-room-category>${roomCategoryMarkup(hotel)}</select>
             </div>
             <div class="field">
-              <label for="${id}-stars">Stars</label>
-              <select id="${id}-stars" data-hotel-stars>${starOptions()}</select>
+              <span class="field-label">Stars</span>
+              <div class="readonly-value" data-hotel-stars>-</div>
             </div>
           </div>
 
-          <div class="form-grid">
+          <div class="form-grid three">
+            <div class="field">
+              <label for="${id}-pricing-rate">Package room rate</label>
+              <select id="${id}-pricing-rate" data-pricing-rate>${pricingRateOptions()}</select>
+            </div>
             <div class="field">
               <label for="${id}-meal">Meal plan</label>
               <select id="${id}-meal" data-meal-plan>${mealPlanOptions()}</select>
             </div>
             <div class="field">
               <label for="${id}-nights">Nights</label>
-              <input id="${id}-nights" type="number" min="0" step="1" inputmode="numeric" data-hotel-nights value="0">
+              <input id="${id}-nights" type="number" min="0" step="1" inputmode="numeric" data-hotel-nights value="${clampNumber(numberValue("#nightCount"))}">
             </div>
           </div>
 
           <div class="rate-grid" data-rate-grid>
             <div class="field-label">Rate type</div>
-            <div class="field-label">Units</div>
             <div class="field-label">Rate / night</div>
             <div class="field-label">Room category</div>
-            <div class="field-label">Connected rate</div>
+            <div class="field-label">Additional</div>
             ${roomTypes.map((room) => `
               <div class="rate-row" data-rate-row="${room.key}">
                 <div class="rate-name">${room.label}</div>
                 <div class="field">
-                  <label class="field-label" for="${id}-${room.key}-units">Units</label>
-                  <input id="${id}-${room.key}-units" type="number" min="0" step="1" inputmode="numeric" data-rate-units="${room.key}" value="${room.defaultUnits}">
-                </div>
-                <div class="field">
-                  <label class="field-label" for="${id}-${room.key}-rate">Rate</label>
                   <input id="${id}-${room.key}-rate" type="number" min="0" step="1000" inputmode="numeric" data-rate-value="${room.key}">
                 </div>
                 <div class="field">
-                  <label class="field-label" for="${id}-${room.key}-category">Category</label>
                   <select id="${id}-${room.key}-category" data-rate-category="${room.key}">${roomCategoryMarkup(hotel)}</select>
                 </div>
                 <div class="field">
-                  <label class="field-label" for="${id}-${room.key}-link">Connect</label>
-                  ${room.key === "childNoBed"
-                    ? `<select id="${id}-${room.key}-link" data-child-rate-link>${roomLinkOptions()}</select>`
-                    : `<input id="${id}-${room.key}-link" value="Direct" disabled>`}
+                  <select id="${id}-${room.key}-additional" data-rate-additional="${room.key}">${additionalOptions(hotel)}</select>
                 </div>
               </div>
             `).join("")}
@@ -1394,48 +1394,41 @@
       const hotel = selectedHotelById(card.querySelector("[data-hotel-select]").value);
       if (!hotel) {
         card.querySelector("[data-room-category]").innerHTML = roomCategoryMarkup(accommodationList[0]);
-        card.querySelector("[data-hotel-stars]").value = "";
+        card.querySelector("[data-hotel-stars]").textContent = "-";
         roomTypes.forEach((room) => {
           const rateInput = card.querySelector(`[data-rate-value="${room.key}"]`);
-          const unitsInput = card.querySelector(`[data-rate-units="${room.key}"]`);
           const categorySelect = card.querySelector(`[data-rate-category="${room.key}"]`);
+          const additionalSelect = card.querySelector(`[data-rate-additional="${room.key}"]`);
           if (rateInput) rateInput.value = 0;
-          if (unitsInput) unitsInput.value = 0;
           if (categorySelect) categorySelect.innerHTML = roomCategoryMarkup(accommodationList[0]);
+          if (additionalSelect) additionalSelect.innerHTML = additionalOptions(null);
         });
         calculate();
         return;
       }
       card.querySelector("[data-room-category]").innerHTML = roomCategoryMarkup(hotel);
-      card.querySelector("[data-hotel-stars]").value = String(hotel.stars);
+      card.querySelector("[data-hotel-stars]").textContent = starLabel(hotel.stars);
 
       roomTypes.forEach((room) => {
         const rateInput = card.querySelector(`[data-rate-value="${room.key}"]`);
         const categorySelect = card.querySelector(`[data-rate-category="${room.key}"]`);
+        const additionalSelect = card.querySelector(`[data-rate-additional="${room.key}"]`);
         if (rateInput) rateInput.value = hotel.rates[room.key] || 0;
         if (categorySelect) categorySelect.innerHTML = roomCategoryMarkup(hotel);
+        if (additionalSelect) additionalSelect.innerHTML = additionalOptions(hotel);
       });
 
-      updateChildRateFromLinked(card);
       calculate();
-    }
-
-    function updateChildRateFromLinked(card) {
-      const linkSelect = card?.querySelector("[data-child-rate-link]");
-      const childRate = card?.querySelector('[data-rate-value="childNoBed"]');
-      if (!linkSelect || !childRate) return;
-      const linkedRate = card.querySelector(`[data-rate-value="${linkSelect.value}"]`);
-      if (linkedRate) childRate.value = linkedRate.value;
     }
 
     function hotelTotal(card) {
       const nights = clampNumber(Number(card.querySelector("[data-hotel-nights]").value));
       const mealCost = Number(card.querySelector("[data-meal-plan]").value) * chargeableGuests() * nights;
-      const roomCost = roomTypes.reduce((sum, room) => {
-        const units = clampNumber(Number(card.querySelector(`[data-rate-units="${room.key}"]`).value));
-        const rate = clampNumber(Number(card.querySelector(`[data-rate-value="${room.key}"]`).value));
-        return sum + units * rate * nights;
-      }, 0);
+      const selectedRate = card.querySelector("[data-pricing-rate]").value || "double";
+      const rate = clampNumber(Number(card.querySelector(`[data-rate-value="${selectedRate}"]`)?.value));
+      const additionalSelect = card.querySelector(`[data-rate-additional="${selectedRate}"]`);
+      const additional = clampNumber(Number(additionalSelect?.selectedOptions?.[0]?.dataset.additionalPrice));
+      const roomCost = (rate + additional) * nights;
       const total = roomCost + mealCost;
       card.querySelector("[data-hotel-total]").textContent = formatCurrency(total);
       return total;
@@ -1443,6 +1436,13 @@
 
     function accommodationTotal() {
       return hotelCards().reduce((sum, card) => sum + hotelTotal(card), 0);
+    }
+
+    function syncHotelNightsFromPackage() {
+      const nights = clampNumber(numberValue("#nightCount"));
+      hotelCards().forEach((card) => {
+        card.querySelector("[data-hotel-nights]").value = nights;
+      });
     }
 
     function initActivities() {
@@ -1513,7 +1513,7 @@
 
       $("#guestStatus").textContent = `${guests} ${guests === 1 ? "guest" : "guests"}`;
       $("#nightStatus").textContent = `${nights} ${nights === 1 ? "night" : "nights"}`;
-      $("#summaryGuestLine").textContent = `${chargeableGuests()} chargeable guests, ${nights} ${nights === 1 ? "night" : "nights"}`;
+      $("#summaryGuestLine").textContent = `${chargeableGuests()} guests, ${nights} ${nights === 1 ? "night" : "nights"}`;
 
       $("#accommodationTotal").textContent = formatCurrency(state.totals.accommodation);
       $("#visaTotal").textContent = formatCurrency(state.totals.visa);
@@ -1539,9 +1539,10 @@
           const selected = selectedHotelById(card.querySelector("[data-hotel-select]").value);
           const name = card.querySelector("[data-hotel-name]").value || `Hotel ${index + 1}`;
           const category = card.querySelector("[data-room-category]").value;
-          const stars = card.querySelector("[data-hotel-stars]").value;
+          const stars = card.querySelector("[data-hotel-stars]").textContent;
+          const rateType = roomTypes.find((room) => room.key === card.querySelector("[data-pricing-rate]").value)?.label || "No rate";
           return selected
-            ? `${name}: ${selected.name}, ${category || "No category"}, ${stars || "No"} star`
+            ? `${name}: ${selected.name}, ${category || "No category"}, ${stars}, ${rateType}`
             : `${name}: No hotel selected`;
         })
         .join("; ") || "No hotel selected";
@@ -1552,7 +1553,7 @@
 
       const lines = [
         $("#packageName").value || "Untitled Package",
-        `${chargeableGuests()} chargeable guests, ${numberValue("#nightCount")} nights`,
+        `${chargeableGuests()} guests, ${numberValue("#nightCount")} nights`,
         `Hotels: ${hotelSummary}`,
         `Visa: ${selectedVisa().name}`,
         `Activities: ${selectedActivities}`,
@@ -1582,9 +1583,7 @@
 
     function resetForm() {
       $("#packageName").value = "";
-      $("#adultCount").value = 0;
-      $("#childCount").value = 0;
-      $("#infantCount").value = 0;
+      $("#guestCount").value = 0;
       $("#nightCount").value = 0;
       $("#visaType").value = "";
       $("#visaFee").value = 0;
@@ -1629,11 +1628,7 @@
 
       document.addEventListener("input", (event) => {
         if (event.target.matches("input, select, textarea")) {
-          const card = event.target.closest?.(".hotel-card");
-          if (card && event.target.matches("[data-rate-value]")) {
-            const linkedKey = card.querySelector("[data-child-rate-link]")?.value;
-            if (event.target.dataset.rateValue === linkedKey) updateChildRateFromLinked(card);
-          }
+          if (event.target.id === "nightCount") syncHotelNightsFromPackage();
           calculate();
         }
       });
@@ -1641,7 +1636,6 @@
       document.addEventListener("change", (event) => {
         const card = event.target.closest?.(".hotel-card");
         if (event.target.matches("[data-hotel-select]")) applyHotelDefaults(card);
-        if (event.target.matches("[data-child-rate-link]")) updateChildRateFromLinked(card);
         if (event.target.id === "visaType") applyVisaDefaults();
         if (event.target.id === "vehicleType") applyVehicleDefaults();
         calculate();
