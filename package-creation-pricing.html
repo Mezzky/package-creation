@@ -3,10 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Package Creation Pricing</title>
+  <meta name="description" content="LuxBali package pricing calculator for Bali accommodation, visa, activity, transport, markup, and per-guest quote totals.">
+  <meta name="theme-color" content="#0a4e90">
+  <meta property="og:title" content="LuxBali Package Creation Pricing">
+  <meta property="og:description" content="Build and review Bali travel package prices with accommodation, visa, activities, transport, and per-guest totals.">
+  <meta property="og:type" content="website">
+  <title>LuxBali Package Creation Pricing</title>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "LuxBali Package Creation Pricing",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Any",
+      "description": "A Bali travel package pricing calculator for accommodation, visa, activities, transportation, markup, contingency, and per-guest totals.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "LuxBali"
+      }
+    }
+  </script>
   <style>
-    @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap");
-
     :root {
       color-scheme: light;
       --ui-primary: #0a4e90;
@@ -37,7 +54,7 @@
       min-height: 100vh;
       background: var(--paper);
       color: var(--ink);
-      font-family: "Geist", "Outfit", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-size: 15px;
       line-height: 1.45;
       letter-spacing: 0;
@@ -107,7 +124,7 @@
       line-height: 1.1;
       font-weight: 800;
       color: #0f172a;
-      font-family: "Outfit", "Geist", sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     .status-pill {
@@ -202,7 +219,7 @@
       font-size: 21px;
       line-height: 1.2;
       font-weight: 700;
-      font-family: "Outfit", "Geist", sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     .panel-total {
@@ -508,7 +525,7 @@
 
     .actions {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
     }
 
@@ -553,6 +570,39 @@
 
     .package-output.visible {
       display: block;
+    }
+
+    .save-status {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      min-height: 18px;
+      text-align: right;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .topbar,
+      .main-panel,
+      .actions,
+      .save-status,
+      .drawer {
+        display: none !important;
+      }
+
+      .workspace {
+        display: block;
+        width: 100%;
+        margin: 0;
+      }
+
+      .summary-panel {
+        border: 0;
+        box-shadow: none;
+      }
     }
 
     .drawer {
@@ -705,29 +755,29 @@
             <img class="brand-logo" src="logo-luxbali.png" alt="LuxBali">
             <h1>Package Creation Pricing</h1>
           </div>
-          <div class="status-pill"><span id="guestStatus">0 guests</span><span id="nightStatus">1 night</span></div>
+          <div class="status-pill"><span id="guestStatus">0 guests</span><span id="nightStatus">0 nights</span></div>
         </div>
 
         <div class="setup-grid">
           <div class="field">
             <label for="packageName">Package name</label>
-            <input id="packageName" type="text" value="Bali Signature Package">
+            <input id="packageName" type="text" value="" autocomplete="off" required>
           </div>
           <div class="field">
             <label for="adultCount">Adults</label>
-            <input id="adultCount" type="number" min="0" step="1" value="2">
+            <input id="adultCount" type="number" min="0" step="1" value="0" inputmode="numeric">
           </div>
           <div class="field">
             <label for="childCount">Children</label>
-            <input id="childCount" type="number" min="0" step="1" value="0">
+            <input id="childCount" type="number" min="0" step="1" value="0" inputmode="numeric">
           </div>
           <div class="field">
             <label for="infantCount">Infants</label>
-            <input id="infantCount" type="number" min="0" step="1" value="0">
+            <input id="infantCount" type="number" min="0" step="1" value="0" inputmode="numeric">
           </div>
           <div class="field">
             <label for="nightCount">Nights</label>
-            <input id="nightCount" type="number" min="1" step="1" value="3">
+            <input id="nightCount" type="number" min="0" step="1" value="0" inputmode="numeric">
           </div>
         </div>
       </div>
@@ -773,11 +823,11 @@
             </div>
             <div class="field">
               <label for="visaFee">Fee / guest</label>
-              <input id="visaFee" type="number" min="0" step="1000">
+              <input id="visaFee" type="number" min="0" step="1000" inputmode="numeric">
             </div>
             <div class="field">
               <label for="visaServiceFee">Service fee</label>
-              <input id="visaServiceFee" type="number" min="0" step="1000" value="150000">
+              <input id="visaServiceFee" type="number" min="0" step="1000" value="0" inputmode="numeric">
             </div>
           </div>
 
@@ -811,14 +861,14 @@
           <div class="form-grid">
             <div class="field">
               <label for="privateGuideFee">Private guide fee</label>
-              <input id="privateGuideFee" type="number" min="0" step="1000" value="650000">
+              <input id="privateGuideFee" type="number" min="0" step="1000" value="0" inputmode="numeric">
             </div>
             <div class="field">
               <label for="activityBuffer">Activity buffer</label>
               <select id="activityBuffer">
                 <option value="0">No buffer</option>
                 <option value="5">5%</option>
-                <option value="10" selected>10%</option>
+                <option value="10">10%</option>
                 <option value="15">15%</option>
               </select>
             </div>
@@ -841,11 +891,11 @@
             </div>
             <div class="field">
               <label for="vehicleQty">Vehicles</label>
-              <input id="vehicleQty" type="number" min="1" step="1" value="1">
+              <input id="vehicleQty" type="number" min="0" step="1" value="0" inputmode="numeric">
             </div>
             <div class="field">
               <label for="transportDays">Days</label>
-              <input id="transportDays" type="number" min="1" step="1" value="3">
+              <input id="transportDays" type="number" min="0" step="1" value="0" inputmode="numeric">
             </div>
           </div>
 
@@ -854,15 +904,15 @@
           <div class="form-grid three">
             <div class="field">
               <label for="vehicleRate">Rate / day</label>
-              <input id="vehicleRate" type="number" min="0" step="1000">
+              <input id="vehicleRate" type="number" min="0" step="1000" inputmode="numeric">
             </div>
             <div class="field">
               <label for="airportTransferFee">Airport transfer</label>
-              <input id="airportTransferFee" type="number" min="0" step="1000" value="450000">
+              <input id="airportTransferFee" type="number" min="0" step="1000" value="0" inputmode="numeric">
             </div>
             <div class="field">
               <label for="parkingFuelFee">Parking & fuel</label>
-              <input id="parkingFuelFee" type="number" min="0" step="1000" value="300000">
+              <input id="parkingFuelFee" type="number" min="0" step="1000" value="0" inputmode="numeric">
             </div>
           </div>
 
@@ -874,7 +924,7 @@
               <span>Applied once per package.</span>
             </div>
             <label class="switch" aria-label="Include airport transfer">
-              <input id="includeAirportTransfer" type="checkbox" checked>
+              <input id="includeAirportTransfer" type="checkbox">
               <span class="slider"></span>
             </label>
           </div>
@@ -885,7 +935,7 @@
         <div class="summary-title">
           <div>
             <h2>Package Ready</h2>
-            <p class="small-note" id="summaryGuestLine">2 guests, 3 nights</p>
+            <p class="small-note" id="summaryGuestLine">0 chargeable guests, 0 nights</p>
           </div>
           <div class="money-big" id="grandTotal">IDR 0</div>
         </div>
@@ -902,11 +952,11 @@
           <div class="adjustments">
             <div class="field">
               <label for="markupPercent">Markup %</label>
-              <input id="markupPercent" type="number" min="0" step="1" value="20">
+              <input id="markupPercent" type="number" min="0" step="1" value="0" inputmode="numeric">
             </div>
             <div class="field">
               <label for="contingencyPercent">Contingency %</label>
-              <input id="contingencyPercent" type="number" min="0" step="1" value="5">
+              <input id="contingencyPercent" type="number" min="0" step="1" value="0" inputmode="numeric">
             </div>
           </div>
 
@@ -918,9 +968,12 @@
 
           <div class="actions">
             <button class="button-primary" type="button" id="createPackageBtn">Create package</button>
+            <button class="button-secondary" type="button" id="copyPackageBtn">Copy</button>
+            <button class="button-secondary" type="button" id="printPackageBtn">Print</button>
             <button class="button-secondary" type="button" id="resetBtn">Reset</button>
           </div>
 
+          <div class="save-status" id="saveStatus">Autosaved</div>
           <div class="package-output" id="packageOutput" aria-live="polite"></div>
         </div>
       </aside>
@@ -930,6 +983,9 @@
   <div class="drawer" id="toast" role="status" aria-live="polite">Package summary updated.</div>
 
   <script>
+    const storageKey = "luxbali-package-pricing-empty-v2";
+    let isRestoringState = false;
+
     const accommodationList = [
       {
         id: "samaya-ubud",
@@ -968,9 +1024,9 @@
     ];
 
     const activityList = [
-      { id: "ubud-tour", name: "Ubud culture day", price: 450000, selected: true },
+      { id: "ubud-tour", name: "Ubud culture day", price: 450000, selected: false },
       { id: "water-sport", name: "Tanjung Benoa water sport", price: 700000, selected: false },
-      { id: "nusa-penida", name: "Nusa Penida island trip", price: 950000, selected: true },
+      { id: "nusa-penida", name: "Nusa Penida island trip", price: 950000, selected: false },
       { id: "spa", name: "Balinese spa ritual", price: 375000, selected: false }
     ];
 
@@ -983,7 +1039,7 @@
 
     const roomTypes = [
       { key: "single", label: "Single", defaultUnits: 0, linkable: true },
-      { key: "double", label: "Double", defaultUnits: 1, linkable: true },
+      { key: "double", label: "Double", defaultUnits: 0, linkable: true },
       { key: "tripleA", label: "Triple A (3 Adult)", defaultUnits: 0, linkable: true },
       { key: "tripleB", label: "Triple B (2 Adult + 1 Child)", defaultUnits: 0, linkable: true },
       { key: "childNoBed", label: "Child No Bed", defaultUnits: 0, linkable: false }
@@ -1034,42 +1090,62 @@
     }
 
     function selectedHotelById(hotelId) {
-      return accommodationList.find((hotel) => hotel.id === hotelId) || accommodationList[0];
+      return accommodationList.find((hotel) => hotel.id === hotelId) || null;
     }
 
     function selectedVisa() {
-      return visaList.find((visa) => visa.id === $("#visaType").value) || visaList[0];
+      return visaList.find((visa) => visa.id === $("#visaType").value) || { name: "No visa selected", fee: 0 };
     }
 
     function selectedVehicle() {
-      return vehicleList.find((vehicle) => vehicle.id === $("#vehicleType").value) || vehicleList[0];
+      return vehicleList.find((vehicle) => vehicle.id === $("#vehicleType").value) || { name: "No vehicle selected", capacity: 0, rate: 0 };
+    }
+
+    function setFieldValue(selector, value) {
+      const field = $(selector);
+      if (field && value !== undefined && value !== null) field.value = value;
+    }
+
+    function setChecked(selector, value) {
+      const field = $(selector);
+      if (field && value !== undefined && value !== null) field.checked = Boolean(value);
     }
 
     function initOptions() {
-      $("#visaType").innerHTML = visaList
-        .map((visa) => `<option value="${visa.id}">${visa.name}</option>`)
+      $("#visaType").innerHTML = [
+        '<option value="">Select visa type</option>',
+        ...visaList.map((visa) => `<option value="${visa.id}">${visa.name}</option>`)
+      ]
         .join("");
 
-      $("#vehicleType").innerHTML = vehicleList
-        .map((vehicle) => `<option value="${vehicle.id}">${vehicle.name} - ${vehicle.capacity} pax</option>`)
-        .join("");
-    }
-
-    function hotelOptionMarkup(selectedId = accommodationList[0].id) {
-      return accommodationList
-        .map((hotel) => `<option value="${hotel.id}" ${hotel.id === selectedId ? "selected" : ""}>${hotel.name}</option>`)
+      $("#vehicleType").innerHTML = [
+        '<option value="">Select vehicle</option>',
+        ...vehicleList.map((vehicle) => `<option value="${vehicle.id}">${vehicle.name} - ${vehicle.capacity} pax</option>`)
+      ]
         .join("");
     }
 
-    function roomCategoryMarkup(hotel, selectedCategory = hotel.roomCategories[0]) {
-      return hotel.roomCategories
-        .map((category) => `<option value="${category}" ${category === selectedCategory ? "selected" : ""}>${category}</option>`)
+    function hotelOptionMarkup(selectedId = "") {
+      return [
+        '<option value="">Select hotel</option>',
+        ...accommodationList.map((hotel) => `<option value="${hotel.id}" ${hotel.id === selectedId ? "selected" : ""}>${hotel.name}</option>`)
+      ]
         .join("");
     }
 
-    function starOptions(selectedStars = 5) {
-      return [1, 2, 3, 4, 5]
-        .map((stars) => `<option value="${stars}" ${stars === Number(selectedStars) ? "selected" : ""}>${stars} Star${stars > 1 ? "s" : ""}</option>`)
+    function roomCategoryMarkup(hotel, selectedCategory = "") {
+      return [
+        '<option value="">Select category</option>',
+        ...hotel.roomCategories.map((category) => `<option value="${category}" ${category === selectedCategory ? "selected" : ""}>${category}</option>`)
+      ]
+        .join("");
+    }
+
+    function starOptions(selectedStars = "") {
+      return [
+        '<option value="">Select stars</option>',
+        ...[1, 2, 3, 4, 5].map((stars) => `<option value="${stars}" ${stars === Number(selectedStars) ? "selected" : ""}>${stars} Star${stars > 1 ? "s" : ""}</option>`)
+      ]
         .join("");
     }
 
@@ -1097,9 +1173,140 @@
       state.hotelCounter += 1;
       state.hotelIds.push(id);
       $("#hotelList").appendChild(renderHotelCard(id));
-      applyHotelDefaults($(`[data-hotel-id="${id}"]`));
       calculate();
       if (!silent) showToast("Hotel added.");
+    }
+
+    function saveState() {
+      if (isRestoringState) return;
+
+      const saved = {
+        packageName: $("#packageName").value,
+        adultCount: $("#adultCount").value,
+        childCount: $("#childCount").value,
+        infantCount: $("#infantCount").value,
+        nightCount: $("#nightCount").value,
+        visaType: $("#visaType").value,
+        visaFee: $("#visaFee").value,
+        visaServiceFee: $("#visaServiceFee").value,
+        visaExpress: $("#visaExpress").checked,
+        activities: activityList.map((activity) => ({
+          id: activity.id,
+          selected: Boolean($(`[data-activity="${activity.id}"]`)?.checked)
+        })),
+        privateGuideFee: $("#privateGuideFee").value,
+        activityBuffer: $("#activityBuffer").value,
+        vehicleType: $("#vehicleType").value,
+        vehicleQty: $("#vehicleQty").value,
+        transportDays: $("#transportDays").value,
+        vehicleRate: $("#vehicleRate").value,
+        airportTransferFee: $("#airportTransferFee").value,
+        parkingFuelFee: $("#parkingFuelFee").value,
+        includeAirportTransfer: $("#includeAirportTransfer").checked,
+        markupPercent: $("#markupPercent").value,
+        contingencyPercent: $("#contingencyPercent").value,
+        packageOutput: $("#packageOutput").textContent,
+        packageOutputVisible: $("#packageOutput").classList.contains("visible"),
+        hotels: hotelCards().map((card) => ({
+          name: card.querySelector("[data-hotel-name]").value,
+          selectedHotel: card.querySelector("[data-hotel-select]").value,
+          roomCategory: card.querySelector("[data-room-category]").value,
+          stars: card.querySelector("[data-hotel-stars]").value,
+          mealPlan: card.querySelector("[data-meal-plan]").value,
+          nights: card.querySelector("[data-hotel-nights]").value,
+          childRateLink: card.querySelector("[data-child-rate-link]")?.value,
+          rates: roomTypes.reduce((rates, room) => {
+            rates[room.key] = {
+              units: card.querySelector(`[data-rate-units="${room.key}"]`).value,
+              rate: card.querySelector(`[data-rate-value="${room.key}"]`).value,
+              category: card.querySelector(`[data-rate-category="${room.key}"]`).value
+            };
+            return rates;
+          }, {})
+        }))
+      };
+
+      localStorage.setItem(storageKey, JSON.stringify(saved));
+      $("#saveStatus").textContent = "Autosaved";
+    }
+
+    function restoreHotel(card, savedHotel) {
+      if (!card || !savedHotel) return;
+
+      card.querySelector("[data-hotel-name]").value = savedHotel.name || "";
+      card.querySelector("[data-hotel-select]").value = savedHotel.selectedHotel || "";
+      if (savedHotel.selectedHotel) applyHotelDefaults(card);
+      setFieldValue(`#${card.dataset.hotelId}-category`, savedHotel.roomCategory);
+      setFieldValue(`#${card.dataset.hotelId}-stars`, savedHotel.stars);
+      setFieldValue(`#${card.dataset.hotelId}-meal`, savedHotel.mealPlan);
+      setFieldValue(`#${card.dataset.hotelId}-nights`, savedHotel.nights);
+
+      roomTypes.forEach((room) => {
+        const savedRate = savedHotel.rates?.[room.key];
+        if (!savedRate) return;
+        card.querySelector(`[data-rate-units="${room.key}"]`).value = savedRate.units;
+        card.querySelector(`[data-rate-value="${room.key}"]`).value = savedRate.rate;
+        card.querySelector(`[data-rate-category="${room.key}"]`).value = savedRate.category;
+      });
+
+      const childLink = card.querySelector("[data-child-rate-link]");
+      if (childLink && savedHotel.childRateLink) childLink.value = savedHotel.childRateLink;
+    }
+
+    function restoreState() {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return false;
+
+      try {
+        const saved = JSON.parse(raw);
+        isRestoringState = true;
+
+        setFieldValue("#packageName", saved.packageName);
+        setFieldValue("#adultCount", saved.adultCount);
+        setFieldValue("#childCount", saved.childCount);
+        setFieldValue("#infantCount", saved.infantCount);
+        setFieldValue("#nightCount", saved.nightCount);
+        setFieldValue("#visaType", saved.visaType);
+        applyVisaDefaults();
+        setFieldValue("#visaFee", saved.visaFee);
+        setFieldValue("#visaServiceFee", saved.visaServiceFee);
+        setChecked("#visaExpress", saved.visaExpress);
+        setFieldValue("#privateGuideFee", saved.privateGuideFee);
+        setFieldValue("#activityBuffer", saved.activityBuffer);
+        setFieldValue("#vehicleType", saved.vehicleType);
+        applyVehicleDefaults();
+        setFieldValue("#vehicleQty", saved.vehicleQty);
+        setFieldValue("#transportDays", saved.transportDays);
+        setFieldValue("#vehicleRate", saved.vehicleRate);
+        setFieldValue("#airportTransferFee", saved.airportTransferFee);
+        setFieldValue("#parkingFuelFee", saved.parkingFuelFee);
+        setChecked("#includeAirportTransfer", saved.includeAirportTransfer);
+        setFieldValue("#markupPercent", saved.markupPercent);
+        setFieldValue("#contingencyPercent", saved.contingencyPercent);
+
+        saved.activities?.forEach((activity) => {
+          const field = $(`[data-activity="${activity.id}"]`);
+          if (field) field.checked = Boolean(activity.selected);
+        });
+
+        $("#hotelList").innerHTML = "";
+        state.hotelCounter = 0;
+        state.hotelIds = [];
+        const savedHotels = saved.hotels?.length ? saved.hotels : [{}];
+        savedHotels.forEach((hotel) => {
+          addHotel(true);
+          restoreHotel(hotelCards().at(-1), hotel);
+        });
+
+        $("#packageOutput").textContent = saved.packageOutput || "";
+        $("#packageOutput").classList.toggle("visible", Boolean(saved.packageOutputVisible && saved.packageOutput));
+        return true;
+      } catch (error) {
+        localStorage.removeItem(storageKey);
+        return false;
+      } finally {
+        isRestoringState = false;
+      }
     }
 
     function renderHotelCard(id) {
@@ -1111,7 +1318,7 @@
         <div class="hotel-card-header">
           <div class="hotel-title-field">
             <label class="field-label" for="${id}-name">Hotel name</label>
-            <input id="${id}-name" type="text" data-hotel-name value="Hotel ${state.hotelCounter}">
+            <input id="${id}-name" type="text" data-hotel-name value="">
           </div>
           <div class="hotel-card-actions">
             <div class="hotel-card-total" data-hotel-total>${formatCurrency(0)}</div>
@@ -1124,7 +1331,7 @@
           <div class="form-grid three">
             <div class="field">
               <label for="${id}-select">Select hotel</label>
-              <select id="${id}-select" data-hotel-select>${hotelOptionMarkup(hotel.id)}</select>
+              <select id="${id}-select" data-hotel-select>${hotelOptionMarkup()}</select>
             </div>
             <div class="field">
               <label for="${id}-category">Room category</label>
@@ -1132,7 +1339,7 @@
             </div>
             <div class="field">
               <label for="${id}-stars">Stars</label>
-              <select id="${id}-stars" data-hotel-stars>${starOptions(hotel.stars)}</select>
+              <select id="${id}-stars" data-hotel-stars>${starOptions()}</select>
             </div>
           </div>
 
@@ -1143,7 +1350,7 @@
             </div>
             <div class="field">
               <label for="${id}-nights">Nights</label>
-              <input id="${id}-nights" type="number" min="1" step="1" data-hotel-nights value="${clampNumber(numberValue("#nightCount"), 1)}">
+              <input id="${id}-nights" type="number" min="0" step="1" inputmode="numeric" data-hotel-nights value="0">
             </div>
           </div>
 
@@ -1158,11 +1365,11 @@
                 <div class="rate-name">${room.label}</div>
                 <div class="field">
                   <label class="field-label" for="${id}-${room.key}-units">Units</label>
-                  <input id="${id}-${room.key}-units" type="number" min="0" step="1" data-rate-units="${room.key}" value="${room.defaultUnits}">
+                  <input id="${id}-${room.key}-units" type="number" min="0" step="1" inputmode="numeric" data-rate-units="${room.key}" value="${room.defaultUnits}">
                 </div>
                 <div class="field">
                   <label class="field-label" for="${id}-${room.key}-rate">Rate</label>
-                  <input id="${id}-${room.key}-rate" type="number" min="0" step="1000" data-rate-value="${room.key}">
+                  <input id="${id}-${room.key}-rate" type="number" min="0" step="1000" inputmode="numeric" data-rate-value="${room.key}">
                 </div>
                 <div class="field">
                   <label class="field-label" for="${id}-${room.key}-category">Category</label>
@@ -1185,6 +1392,20 @@
     function applyHotelDefaults(card) {
       if (!card) return;
       const hotel = selectedHotelById(card.querySelector("[data-hotel-select]").value);
+      if (!hotel) {
+        card.querySelector("[data-room-category]").innerHTML = roomCategoryMarkup(accommodationList[0]);
+        card.querySelector("[data-hotel-stars]").value = "";
+        roomTypes.forEach((room) => {
+          const rateInput = card.querySelector(`[data-rate-value="${room.key}"]`);
+          const unitsInput = card.querySelector(`[data-rate-units="${room.key}"]`);
+          const categorySelect = card.querySelector(`[data-rate-category="${room.key}"]`);
+          if (rateInput) rateInput.value = 0;
+          if (unitsInput) unitsInput.value = 0;
+          if (categorySelect) categorySelect.innerHTML = roomCategoryMarkup(accommodationList[0]);
+        });
+        calculate();
+        return;
+      }
       card.querySelector("[data-room-category]").innerHTML = roomCategoryMarkup(hotel);
       card.querySelector("[data-hotel-stars]").value = String(hotel.stars);
 
@@ -1208,7 +1429,7 @@
     }
 
     function hotelTotal(card) {
-      const nights = clampNumber(Number(card.querySelector("[data-hotel-nights]").value), 1);
+      const nights = clampNumber(Number(card.querySelector("[data-hotel-nights]").value));
       const mealCost = Number(card.querySelector("[data-meal-plan]").value) * chargeableGuests() * nights;
       const roomCost = roomTypes.reduce((sum, room) => {
         const units = clampNumber(Number(card.querySelector(`[data-rate-units="${room.key}"]`).value));
@@ -1269,8 +1490,8 @@
     }
 
     function transportTotal() {
-      const days = clampNumber(numberValue("#transportDays"), 1);
-      const qty = clampNumber(numberValue("#vehicleQty"), 1);
+      const days = clampNumber(numberValue("#transportDays"));
+      const qty = clampNumber(numberValue("#vehicleQty"));
       const rate = clampNumber(numberValue("#vehicleRate"));
       const airport = $("#includeAirportTransfer").checked ? clampNumber(numberValue("#airportTransferFee")) : 0;
       const parkingFuel = clampNumber(numberValue("#parkingFuelFee"));
@@ -1279,7 +1500,7 @@
 
     function calculate() {
       const guests = totalGuests();
-      const nights = clampNumber(numberValue("#nightCount"), 1);
+      const nights = clampNumber(numberValue("#nightCount"));
       state.totals.accommodation = accommodationTotal();
       state.totals.visa = visaTotal();
       state.totals.activity = activityTotal();
@@ -1307,6 +1528,7 @@
       $("#contingencyTotal").textContent = formatCurrency(state.totals.contingency);
       $("#grandTotal").textContent = formatCurrency(state.totals.grand);
       $("#pricePerGuest").textContent = formatCurrency(state.totals.perGuest);
+      saveState();
     }
 
     function createPackageSummary() {
@@ -1318,7 +1540,9 @@
           const name = card.querySelector("[data-hotel-name]").value || `Hotel ${index + 1}`;
           const category = card.querySelector("[data-room-category]").value;
           const stars = card.querySelector("[data-hotel-stars]").value;
-          return `${name}: ${selected.name}, ${category}, ${stars} star`;
+          return selected
+            ? `${name}: ${selected.name}, ${category || "No category"}, ${stars || "No"} star`
+            : `${name}: No hotel selected`;
         })
         .join("; ") || "No hotel selected";
       const selectedActivities = activityList
@@ -1339,33 +1563,50 @@
 
       $("#packageOutput").textContent = lines.join("\n");
       $("#packageOutput").classList.add("visible");
+      saveState();
       showToast("Package is ready.");
     }
 
+    async function copyPackageSummary() {
+      if (!$("#packageOutput").classList.contains("visible")) {
+        createPackageSummary();
+      }
+
+      try {
+        await navigator.clipboard.writeText($("#packageOutput").textContent);
+        showToast("Package summary copied.");
+      } catch (error) {
+        showToast("Copy failed. Select the summary text manually.");
+      }
+    }
+
     function resetForm() {
-      $("#packageName").value = "Bali Signature Package";
-      $("#adultCount").value = 2;
+      $("#packageName").value = "";
+      $("#adultCount").value = 0;
       $("#childCount").value = 0;
       $("#infantCount").value = 0;
-      $("#nightCount").value = 3;
-      $("#visaServiceFee").value = 150000;
+      $("#nightCount").value = 0;
+      $("#visaType").value = "";
+      $("#visaFee").value = 0;
+      $("#visaServiceFee").value = 0;
       $("#visaExpress").checked = false;
-      $("#privateGuideFee").value = 650000;
-      $("#activityBuffer").value = "10";
-      $("#vehicleQty").value = 1;
-      $("#transportDays").value = 3;
-      $("#airportTransferFee").value = 450000;
-      $("#parkingFuelFee").value = 300000;
-      $("#includeAirportTransfer").checked = true;
+      $("#privateGuideFee").value = 0;
+      $("#activityBuffer").value = "0";
+      $("#vehicleType").value = "";
+      $("#vehicleQty").value = 0;
+      $("#transportDays").value = 0;
+      $("#vehicleRate").value = 0;
+      $("#airportTransferFee").value = 0;
+      $("#parkingFuelFee").value = 0;
+      $("#includeAirportTransfer").checked = false;
       $("#packageOutput").classList.remove("visible");
       state.hotelCounter = 0;
       state.hotelIds = [];
       $("#hotelList").innerHTML = "";
       addHotel(true);
       initActivities();
-      applyVisaDefaults();
-      applyVehicleDefaults();
       calculate();
+      saveState();
       showToast("Pricing form reset.");
     }
 
@@ -1428,15 +1669,20 @@
 
       $("#addHotelBtn").addEventListener("click", addHotel);
       $("#createPackageBtn").addEventListener("click", createPackageSummary);
+      $("#copyPackageBtn").addEventListener("click", copyPackageSummary);
+      $("#printPackageBtn").addEventListener("click", () => {
+        if (!$("#packageOutput").classList.contains("visible")) createPackageSummary();
+        window.print();
+      });
       $("#resetBtn").addEventListener("click", resetForm);
     }
 
     initOptions();
     initActivities();
     bindEvents();
-    addHotel(true);
-    applyVisaDefaults();
-    applyVehicleDefaults();
+    if (!restoreState()) {
+      addHotel(true);
+    }
     calculate();
   </script>
 </body>
