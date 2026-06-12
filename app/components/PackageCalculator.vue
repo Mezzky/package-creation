@@ -2,9 +2,7 @@
   <div class="app-shell">
     <AppTopbar
       v-model:package-name="packageName"
-      v-model:adult-count="adultCount"
-      v-model:child-count="childCount"
-      v-model:infant-count="infantCount"
+      v-model:guest-count="guestCount"
       v-model:night-count="nightCount"
       :total-guests="totalGuests"
     />
@@ -52,7 +50,6 @@
               :format-currency="formatCurrency"
               @remove="removeHotel"
               @hotel-change="applyHotelDefaults"
-              @child-link-change="updateChildRateFromLinked"
             />
           </div>
         </div>
@@ -233,9 +230,7 @@ const {
   vehicleList,
   visaList,
   packageName,
-  adultCount,
-  childCount,
-  infantCount,
+  guestCount,
   nightCount,
   hotels,
   visaType,
@@ -263,7 +258,6 @@ const {
   addHotel,
   removeHotel,
   applyHotelDefaults,
-  updateChildRateFromLinked,
   applyVisaDefaults,
   applyVehicleDefaults,
   hotelTotal,

@@ -4,6 +4,7 @@ export type Hotel = {
   stars: number;
   roomCategories: string[];
   rates: Record<RoomTypeKey, number>;
+  additionals: HotelAdditional[];
 };
 
 export type RoomTypeKey = "single" | "double" | "tripleA" | "tripleB" | "childNoBed";
@@ -11,8 +12,12 @@ export type RoomTypeKey = "single" | "double" | "tripleA" | "tripleB" | "childNo
 export type RoomType = {
   key: RoomTypeKey;
   label: string;
-  defaultUnits: number;
-  linkable: boolean;
+};
+
+export type HotelAdditional = {
+  id: string;
+  name: string;
+  price: number;
 };
 
 export type Visa = {
@@ -40,28 +45,60 @@ export const accommodationList: Hotel[] = [
     name: "Samaya Ubud",
     stars: 5,
     roomCategories: ["Hill View Suite", "Ayung Villa", "Royal Courtyard Villa"],
-    rates: { single: 2100000, double: 2400000, tripleA: 2950000, tripleB: 2800000, childNoBed: 750000 }
+    rates: { single: 2100000, double: 2400000, tripleA: 2950000, tripleB: 2800000, childNoBed: 750000 },
+    additionals: [
+      { id: "none", name: "No additional", price: 0 },
+      { id: "breakfast", name: "Breakfast", price: 125000 },
+      { id: "extra-bed", name: "Extra bed", price: 450000 }
+    ]
   },
   {
     id: "ayana-segara",
     name: "Ayana Segara Bali",
     stars: 5,
     roomCategories: ["Resort View Room", "Ocean View Suite", "Segara Residence"],
-    rates: { single: 3300000, double: 3650000, tripleA: 4300000, tripleB: 4100000, childNoBed: 950000 }
+    rates: { single: 3300000, double: 3650000, tripleA: 4300000, tripleB: 4100000, childNoBed: 950000 },
+    additionals: [
+      { id: "none", name: "No additional", price: 0 },
+      { id: "breakfast", name: "Breakfast", price: 175000 },
+      { id: "club-access", name: "Club access", price: 650000 }
+    ]
   },
   {
     id: "maya-sanur",
     name: "Maya Sanur Resort",
     stars: 5,
     roomCategories: ["Deluxe Garden", "Lagoon Access", "Beachfront Suite"],
-    rates: { single: 1850000, double: 2150000, tripleA: 2700000, tripleB: 2550000, childNoBed: 625000 }
+    rates: { single: 1850000, double: 2150000, tripleA: 2700000, tripleB: 2550000, childNoBed: 625000 },
+    additionals: [
+      { id: "none", name: "No additional", price: 0 },
+      { id: "breakfast", name: "Breakfast", price: 125000 },
+      { id: "airport-pickup", name: "Airport pickup", price: 350000 }
+    ]
   },
   {
     id: "sankara-seminyak",
     name: "Sankara Seminyak",
     stars: 4,
     roomCategories: ["Superior Room", "Deluxe Pool View", "Two Bedroom Suite"],
-    rates: { single: 1350000, double: 1600000, tripleA: 2100000, tripleB: 1980000, childNoBed: 450000 }
+    rates: { single: 1350000, double: 1600000, tripleA: 2100000, tripleB: 1980000, childNoBed: 450000 },
+    additionals: [
+      { id: "none", name: "No additional", price: 0 },
+      { id: "breakfast", name: "Breakfast", price: 95000 },
+      { id: "late-checkout", name: "Late checkout", price: 300000 }
+    ]
+  },
+  {
+    id: "sunset-kuta",
+    name: "Sunset Kuta Hotel",
+    stars: 3,
+    roomCategories: ["Standard Room", "Superior Room", "Family Room"],
+    rates: { single: 850000, double: 1050000, tripleA: 1450000, tripleB: 1325000, childNoBed: 250000 },
+    additionals: [
+      { id: "none", name: "No additional", price: 0 },
+      { id: "breakfast", name: "Breakfast", price: 75000 },
+      { id: "extra-bed", name: "Extra bed", price: 250000 }
+    ]
   }
 ];
 
@@ -86,9 +123,9 @@ export const vehicleList: Vehicle[] = [
 ];
 
 export const roomTypes: RoomType[] = [
-  { key: "single", label: "Single", defaultUnits: 0, linkable: true },
-  { key: "double", label: "Double", defaultUnits: 0, linkable: true },
-  { key: "tripleA", label: "Triple A (3 Adult)", defaultUnits: 0, linkable: true },
-  { key: "tripleB", label: "Triple B (2 Adult + 1 Child)", defaultUnits: 0, linkable: true },
-  { key: "childNoBed", label: "Child No Bed", defaultUnits: 0, linkable: false }
+  { key: "single", label: "Single" },
+  { key: "double", label: "Double" },
+  { key: "tripleA", label: "Triple A (3 Adult)" },
+  { key: "tripleB", label: "Triple B (2 Adult + 1 Child)" },
+  { key: "childNoBed", label: "Child No Bed" }
 ];

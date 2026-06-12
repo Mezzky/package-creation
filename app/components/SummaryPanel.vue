@@ -3,7 +3,7 @@
     <div class="summary-title">
       <div>
         <h2>Package Ready</h2>
-        <p class="small-note">{{ chargeableGuests }} chargeable guests, {{ nightCount }} {{ nightCount === 1 ? "night" : "nights" }}</p>
+        <p class="small-note">{{ chargeableGuests }} guests, {{ nightCount }} {{ nightCount === 1 ? "night" : "nights" }}</p>
       </div>
       <div class="money-big">{{ formatCurrency(totals.grand) }}</div>
     </div>

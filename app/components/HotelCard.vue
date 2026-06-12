@@ -33,15 +33,18 @@
           </select>
         </div>
         <div class="field">
-          <label :for="`hotel-${hotel.uid}-stars`">Stars</label>
-          <select :id="`hotel-${hotel.uid}-stars`" v-model="hotel.stars">
-            <option value="">Select stars</option>
-            <option v-for="stars in [1, 2, 3, 4, 5]" :key="stars" :value="String(stars)">{{ stars }} Star{{ stars > 1 ? "s" : "" }}</option>
-          </select>
+          <span class="field-label">Stars</span>
+          <div class="readonly-value">{{ starLabel }}</div>
         </div>
       </div>
 
-      <div class="form-grid">
+      <div class="form-grid three">
+        <div class="field">
+          <label :for="`hotel-${hotel.uid}-selected-rate`">Package room rate</label>
+          <select :id="`hotel-${hotel.uid}-selected-rate`" v-model="hotel.selectedRate">
+            <option v-for="room in roomTypes" :key="room.key" :value="room.key">{{ room.label }}</option>
+          </select>
+        </div>
         <div class="field">
           <label :for="`hotel-${hotel.uid}-meal`">Meal plan</label>
           <select :id="`hotel-${hotel.uid}-meal`" v-model.number="hotel.mealPlan">
@@ -58,33 +61,26 @@
 
       <div class="rate-grid">
         <div class="field-label">Rate type</div>
-        <div class="field-label">Units</div>
         <div class="field-label">Rate / night</div>
         <div class="field-label">Room category</div>
-        <div class="field-label">Connected rate</div>
+        <div class="field-label">Additional</div>
         <div v-for="room in roomTypes" :key="room.key" class="rate-row">
           <div class="rate-name">{{ room.label }}</div>
           <div class="field">
-            <label class="field-label" :for="`hotel-${hotel.uid}-${room.key}-units`">Units</label>
-            <input :id="`hotel-${hotel.uid}-${room.key}-units`" v-model.number="hotel.rates[room.key].units" type="number" min="0" step="1" inputmode="numeric">
+            <input :id="`hotel-${hotel.uid}-${room.key}-rate`" v-model.number="hotel.rates[room.key].rate" type="number" min="0" step="1000" inputmode="numeric">
           </div>
           <div class="field">
-            <label class="field-label" :for="`hotel-${hotel.uid}-${room.key}-rate`">Rate</label>
-            <input :id="`hotel-${hotel.uid}-${room.key}-rate`" v-model.number="hotel.rates[room.key].rate" type="number" min="0" step="1000" inputmode="numeric" @input="room.key === hotel.childRateLink ? $emit('child-link-change', hotel) : null">
-          </div>
-          <div class="field">
-            <label class="field-label" :for="`hotel-${hotel.uid}-${room.key}-category`">Category</label>
             <select :id="`hotel-${hotel.uid}-${room.key}-category`" v-model="hotel.rates[room.key].category">
               <option value="">Select category</option>
               <option v-for="category in categoryOptions" :key="category" :value="category">{{ category }}</option>
             </select>
           </div>
           <div class="field">
-            <label class="field-label" :for="`hotel-${hotel.uid}-${room.key}-link`">Connect</label>
-            <select v-if="room.key === 'childNoBed'" :id="`hotel-${hotel.uid}-${room.key}-link`" v-model="hotel.childRateLink" @change="$emit('child-link-change', hotel)">
-              <option v-for="option in linkableRooms" :key="option.key" :value="option.key">{{ option.label }}</option>
+            <select :id="`hotel-${hotel.uid}-${room.key}-additional`" v-model="hotel.rates[room.key].additionalId">
+              <option v-for="additional in additionalOptions" :key="additional.id" :value="additional.id">
+                {{ additional.name }} ({{ formatCurrency(additional.price) }})
+              </option>
             </select>
-            <input v-else :id="`hotel-${hotel.uid}-${room.key}-link`" value="Direct" disabled>
           </div>
         </div>
       </div>
@@ -107,10 +103,13 @@ const props = defineProps<{
 defineEmits<{
   remove: [uid: number];
   "hotel-change": [hotel: HotelState];
-  "child-link-change": [hotel: HotelState];
 }>();
 
 const selectedHotel = computed(() => props.accommodationList.find((hotel) => hotel.id === props.hotel.hotelId));
 const categoryOptions = computed(() => selectedHotel.value?.roomCategories || []);
-const linkableRooms = computed(() => props.roomTypes.filter((room) => room.linkable));
+const additionalOptions = computed(() => selectedHotel.value?.additionals || [{ id: "none", name: "No additional", price: 0 }]);
+const starLabel = computed(() => {
+  const stars = selectedHotel.value?.stars;
+  return stars ? `${stars} Star${stars > 1 ? "s" : ""}` : "-";
+});
 </script>

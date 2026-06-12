@@ -1,9 +1,9 @@
 import { accommodationList, activityList, roomTypes, vehicleList, visaList, type Hotel, type RoomTypeKey } from "~/data/pricing";
 
 type RoomRateState = {
-  units: number;
   rate: number;
   category: string;
+  additionalId: string;
 };
 
 export type HotelState = {
@@ -12,9 +12,9 @@ export type HotelState = {
   hotelId: string;
   category: string;
   stars: string;
+  selectedRate: RoomTypeKey;
   mealPlan: number;
   nights: number;
-  childRateLink: RoomTypeKey;
   rates: Record<RoomTypeKey, RoomRateState>;
   collapsed: boolean;
 };
@@ -22,11 +22,11 @@ export type HotelState = {
 const storageKey = "luxbali-nuxt-package-pricing-v1";
 
 const defaultRates = (): Record<RoomTypeKey, RoomRateState> => ({
-  single: { units: 0, rate: 0, category: "" },
-  double: { units: 0, rate: 0, category: "" },
-  tripleA: { units: 0, rate: 0, category: "" },
-  tripleB: { units: 0, rate: 0, category: "" },
-  childNoBed: { units: 0, rate: 0, category: "" }
+  single: { rate: 0, category: "", additionalId: "none" },
+  double: { rate: 0, category: "", additionalId: "none" },
+  tripleA: { rate: 0, category: "", additionalId: "none" },
+  tripleB: { rate: 0, category: "", additionalId: "none" },
+  childNoBed: { rate: 0, category: "", additionalId: "none" }
 });
 
 export const formatCurrency = (value: number) => new Intl.NumberFormat("id-ID", {
@@ -37,9 +37,7 @@ export const formatCurrency = (value: number) => new Intl.NumberFormat("id-ID", 
 
 export const usePackagePricing = () => {
   const packageName = ref("");
-  const adultCount = ref(0);
-  const childCount = ref(0);
-  const infantCount = ref(0);
+  const guestCount = ref(0);
   const nightCount = ref(0);
   const hotels = ref<HotelState[]>([]);
   const hotelCounter = ref(0);
@@ -70,8 +68,8 @@ export const usePackagePricing = () => {
   const toastVisible = ref(false);
   const restored = ref(false);
 
-  const chargeableGuests = computed(() => adultCount.value + childCount.value);
-  const totalGuests = computed(() => chargeableGuests.value + infantCount.value);
+  const chargeableGuests = computed(() => guestCount.value);
+  const totalGuests = computed(() => guestCount.value);
 
   const selectedVisa = computed(() => visaList.find((visa) => visa.id === visaType.value));
   const selectedVehicle = computed(() => vehicleList.find((vehicle) => vehicle.id === vehicleType.value));
@@ -86,9 +84,9 @@ export const usePackagePricing = () => {
       hotelId: "",
       category: "",
       stars: "",
+      selectedRate: "double",
       mealPlan: 0,
-      nights: 0,
-      childRateLink: "double",
+      nights: nightCount.value,
       rates: defaultRates(),
       collapsed: false
     };
@@ -122,12 +120,8 @@ export const usePackagePricing = () => {
     roomTypes.forEach((room) => {
       hotel.rates[room.key].rate = selected.rates[room.key] || 0;
       hotel.rates[room.key].category = "";
+      hotel.rates[room.key].additionalId = "none";
     });
-    updateChildRateFromLinked(hotel);
-  };
-
-  const updateChildRateFromLinked = (hotel: HotelState) => {
-    hotel.rates.childNoBed.rate = hotel.rates[hotel.childRateLink].rate || 0;
   };
 
   const applyVisaDefaults = () => {
@@ -138,12 +132,34 @@ export const usePackagePricing = () => {
     vehicleRate.value = selectedVehicle.value?.rate || 0;
   };
 
+  const normalizeHotel = (hotel: Partial<HotelState>): HotelState => ({
+    uid: Number(hotel.uid) || ++hotelCounter.value,
+    name: hotel.name || "",
+    hotelId: hotel.hotelId || "",
+    category: hotel.category || "",
+    stars: hotel.stars || "",
+    selectedRate: hotel.selectedRate || "double",
+    mealPlan: Number(hotel.mealPlan) || 0,
+    nights: Number(hotel.nights) || nightCount.value,
+    rates: roomTypes.reduce((rates, room) => {
+      const saved = hotel.rates?.[room.key];
+      rates[room.key] = {
+        rate: Number(saved?.rate) || 0,
+        category: saved?.category || "",
+        additionalId: saved?.additionalId || "none"
+      };
+      return rates;
+    }, {} as Record<RoomTypeKey, RoomRateState>),
+    collapsed: Boolean(hotel.collapsed)
+  });
+
   const hotelTotal = (hotel: HotelState) => {
     const mealCost = hotel.mealPlan * chargeableGuests.value * hotel.nights;
-    const roomCost = roomTypes.reduce((sum, room) => {
-      const rate = hotel.rates[room.key];
-      return sum + rate.units * rate.rate * hotel.nights;
-    }, 0);
+    const selected = selectedHotel(hotel.hotelId);
+    const rate = hotel.rates[hotel.selectedRate]?.rate || 0;
+    const additionalId = hotel.rates[hotel.selectedRate]?.additionalId || "none";
+    const additional = selected?.additionals.find((item) => item.id === additionalId)?.price || 0;
+    const roomCost = (rate + additional) * hotel.nights;
     return roomCost + mealCost;
   };
 
@@ -180,8 +196,9 @@ export const usePackagePricing = () => {
     const hotelSummary = hotels.value.map((hotel, index) => {
       const selected = selectedHotel(hotel.hotelId);
       const name = hotel.name || `Hotel ${index + 1}`;
+      const rateLabel = roomTypes.find((room) => room.key === hotel.selectedRate)?.label || "No rate";
       return selected
-        ? `${name}: ${selected.name}, ${hotel.category || "No category"}, ${hotel.stars || "No"} star`
+        ? `${name}: ${selected.name}, ${hotel.category || "No category"}, ${hotel.stars || "No"} star, ${rateLabel}`
         : `${name}: No hotel selected`;
     }).join("; ") || "No hotel selected";
     const activities = activityList
@@ -191,7 +208,7 @@ export const usePackagePricing = () => {
 
     packageOutput.value = [
       packageName.value || "Untitled Package",
-      `${chargeableGuests.value} chargeable guests, ${nightCount.value} nights`,
+      `${chargeableGuests.value} guests, ${nightCount.value} nights`,
       `Hotels: ${hotelSummary}`,
       `Visa: ${selectedVisa.value?.name || "No visa selected"}`,
       `Activities: ${activities}`,
@@ -219,9 +236,7 @@ export const usePackagePricing = () => {
 
   const resetForm = () => {
     packageName.value = "";
-    adultCount.value = 0;
-    childCount.value = 0;
-    infantCount.value = 0;
+    guestCount.value = 0;
     nightCount.value = 0;
     hotels.value = [createHotel()];
     visaType.value = "";
@@ -255,9 +270,7 @@ export const usePackagePricing = () => {
 
   const serializableState = computed(() => ({
     packageName: packageName.value,
-    adultCount: adultCount.value,
-    childCount: childCount.value,
-    infantCount: infantCount.value,
+    guestCount: guestCount.value,
     nightCount: nightCount.value,
     hotels: hotels.value,
     visaType: visaType.value,
@@ -289,11 +302,9 @@ export const usePackagePricing = () => {
     try {
       const saved = JSON.parse(raw);
       packageName.value = saved.packageName || "";
-      adultCount.value = Number(saved.adultCount) || 0;
-      childCount.value = Number(saved.childCount) || 0;
-      infantCount.value = Number(saved.infantCount) || 0;
+      guestCount.value = Number(saved.guestCount) || 0;
       nightCount.value = Number(saved.nightCount) || 0;
-      hotels.value = saved.hotels?.length ? saved.hotels : [createHotel()];
+      hotels.value = saved.hotels?.length ? saved.hotels.map(normalizeHotel) : [createHotel()];
       hotelCounter.value = Math.max(0, ...hotels.value.map((hotel) => hotel.uid || 0));
       visaType.value = saved.visaType || "";
       visaFee.value = Number(saved.visaFee) || 0;
@@ -322,6 +333,11 @@ export const usePackagePricing = () => {
 
   onMounted(() => {
     restoreState();
+    watch(nightCount, (value) => {
+      hotels.value.forEach((hotel) => {
+        hotel.nights = value;
+      });
+    });
     watch(serializableState, (value) => {
       localStorage.setItem(storageKey, JSON.stringify(value));
     }, { deep: true });
@@ -334,9 +350,7 @@ export const usePackagePricing = () => {
     vehicleList,
     visaList,
     packageName,
-    adultCount,
-    childCount,
-    infantCount,
+    guestCount,
     nightCount,
     hotels,
     visaType,
@@ -366,7 +380,6 @@ export const usePackagePricing = () => {
     addHotel,
     removeHotel,
     applyHotelDefaults,
-    updateChildRateFromLinked,
     applyVisaDefaults,
     applyVehicleDefaults,
     hotelTotal,
