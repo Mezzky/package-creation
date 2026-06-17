@@ -98,7 +98,7 @@ h1 {
 }
 
 .package-setup-grid {
-  grid-template-columns: minmax(220px, 1.2fr) minmax(150px, 0.8fr) repeat(3, minmax(100px, 0.45fr));
+  grid-template-columns: minmax(220px, 1.2fr) minmax(150px, 0.8fr) repeat(2, minmax(100px, 0.45fr));
 }
 
 .workspace {
@@ -124,7 +124,7 @@ h1 {
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   border-bottom: 1px solid var(--line);
   background: #fafafa;
 }
@@ -207,7 +207,7 @@ input,
 select,
 textarea {
   width: 100%;
-  min-height: 48px;
+  min-height: 46px;
   border: 1px solid #d4d4d8;
   border-radius: var(--radius-sm);
   background: #ffffff;
@@ -309,6 +309,13 @@ textarea:focus {
   display: grid;
   gap: 18px;
   padding: 14px;
+}
+
+.itinerary-meta-grid {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.2fr) repeat(3, minmax(130px, 0.8fr));
+  gap: 10px;
+  align-items: end;
 }
 
 .component-toolbar {
@@ -423,6 +430,12 @@ textarea:focus {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.module-heading > div {
+  min-width: min(100%, 260px);
 }
 
 .module-heading h2 {
@@ -439,24 +452,40 @@ textarea:focus {
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   background: #ffffff;
+  min-width: 0;
 }
 
 .accommodation-record {
+  grid-template-columns: minmax(150px, 1.2fr) minmax(140px, 1fr) minmax(110px, 0.8fr) minmax(116px, 0.85fr) minmax(116px, 0.85fr) minmax(112px, 0.8fr) 46px;
+}
+
+.day-range-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(48px, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.activity-record {
+  grid-template-columns: minmax(94px, 0.55fr) minmax(180px, 1.1fr) minmax(180px, 1fr) minmax(120px, 0.7fr) minmax(126px, 0.7fr) 46px;
+}
+
+.transport-record {
   grid-template-columns: repeat(auto-fit, minmax(126px, 1fr));
 }
 
-.activity-record,
-.transport-record,
 .visa-record {
-  grid-template-columns: repeat(auto-fit, minmax(126px, 1fr));
+  grid-template-columns: minmax(220px, 1.2fr) minmax(220px, 1.2fr) minmax(140px, 0.7fr) minmax(126px, 0.7fr) 46px;
 }
 
 .record-card .icon-button {
   width: 100%;
+  min-height: 46px;
+  align-self: end;
 }
 
 .record-total {
-  min-height: 48px;
+  min-height: 46px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -548,7 +577,7 @@ textarea:focus {
 
 .button-small,
 .icon-button {
-  min-height: 38px;
+  min-height: 46px;
   border-radius: var(--radius-sm);
   border: 1px solid #d4d4d8;
   background: #ffffff;
@@ -564,7 +593,7 @@ textarea:focus {
 }
 
 .icon-button {
-  width: 38px;
+  width: 46px;
   padding: 0;
   display: inline-grid;
   place-items: center;
@@ -594,7 +623,7 @@ textarea:focus {
 }
 
 .readonly-value {
-  min-height: 48px;
+  min-height: 46px;
   display: flex;
   align-items: center;
   border: 1px solid var(--line);
@@ -731,7 +760,8 @@ textarea:focus {
 
 .button-primary,
 .button-secondary {
-  min-height: 44px;
+  min-height: 46px;
+  max-width: 100%;
   border-radius: var(--radius-sm);
   font-weight: 600;
   border: 1px solid transparent;
@@ -740,6 +770,14 @@ textarea:focus {
   align-items: center;
   justify-content: center;
   gap: 8px;
+}
+
+.button-primary span,
+.button-secondary span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .button-primary {
@@ -826,6 +864,7 @@ textarea:focus {
   }
 
   .package-setup-grid,
+  .itinerary-meta-grid,
   .reference-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -846,6 +885,7 @@ textarea:focus {
   .actions,
   .hotel-card-header,
   .itinerary-day-header,
+  .itinerary-meta-grid,
   .day-title-group,
   .component-toolbar,
   .module-heading,
@@ -871,6 +911,10 @@ textarea:focus {
   .transport-row,
   .visa-row {
     grid-template-columns: 1fr;
+  }
+
+  .day-range-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .rate-row {

@@ -3,7 +3,7 @@
     <div class="summary-title">
       <div>
         <h2>Pricing Review</h2>
-        <p class="small-note">{{ totalDays }} days, {{ totalNights }} nights, {{ guestCount }} guests</p>
+        <p class="small-note">{{ totalDays }} days, {{ totalNights }} nights</p>
       </div>
       <div class="money-big">{{ formatCurrency(totals.sellingPrice) }}</div>
     </div>
@@ -32,7 +32,6 @@
         <div class="breakdown-row"><span>Product selling subtotal</span><strong>{{ formatCurrency(totals.productSellingSubtotal) }}</strong></div>
         <div class="breakdown-row"><span>Package selling price</span><strong>{{ formatCurrency(totals.sellingPrice) }}</strong></div>
         <div class="breakdown-row"><span>Profit</span><strong>{{ formatCurrency(totals.profit) }}</strong></div>
-        <div class="breakdown-row accent"><span>Price / guest</span><strong>{{ formatCurrency(totals.pricePerGuest) }}</strong></div>
       </div>
 
       <div class="actions">
@@ -64,13 +63,11 @@ type PricingTotals = {
   markup: number;
   sellingPrice: number;
   profit: number;
-  pricePerGuest: number;
 };
 
 defineProps<{
   totalDays: number;
   totalNights: number;
-  guestCount: number;
   totals: PricingTotals;
   markupPercent: number;
   packageOutput: string;

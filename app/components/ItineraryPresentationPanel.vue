@@ -20,6 +20,33 @@
         </div>
 
         <div v-if="!day.collapsed" class="itinerary-day-body">
+          <div class="itinerary-meta-grid">
+            <div class="field">
+              <label :for="`day-${day.id}-location`">Itinerary location</label>
+              <select :id="`day-${day.id}-location`" v-model="day.locationId">
+                <option value="">Select Bali location</option>
+                <option v-for="location in baliLocationList" :key="location.id" :value="location.id">
+                  {{ location.name }} / {{ location.area }}
+                </option>
+              </select>
+            </div>
+            <div class="field">
+              <label :for="`day-${day.id}-departure`">Departure time</label>
+              <input :id="`day-${day.id}-departure`" v-model="day.departureTime" type="time">
+            </div>
+            <div class="field">
+              <label :for="`day-${day.id}-return`">Return time</label>
+              <input :id="`day-${day.id}-return`" v-model="day.returnTime" type="time">
+            </div>
+            <div class="field">
+              <label :for="`day-${day.id}-tag`">Tags</label>
+              <select :id="`day-${day.id}-tag`" v-model="day.tagId">
+                <option value="">Select tag</option>
+                <option v-for="tag in itineraryTagList" :key="tag.id" :value="tag.id">{{ tag.label }}</option>
+              </select>
+            </div>
+          </div>
+
           <div class="field">
             <label :for="`day-${day.id}-description`">Day description</label>
             <textarea :id="`day-${day.id}-description`" v-model="day.description" placeholder="Describe the itinerary flow for this day"></textarea>
@@ -30,7 +57,7 @@
               <h3>Accommodation</h3>
               <p v-if="!linkedProductsForDay(day.dayNumber).accommodations.length" class="empty-line">No linked accommodation.</p>
               <p v-for="record in linkedProductsForDay(day.dayNumber).accommodations" :key="record.recordId">
-                {{ record.productName }} / {{ record.roomType }}
+                {{ record.productName }} / {{ record.roomType }} / {{ record.priceType }}
               </p>
             </div>
             <div class="reference-box">
@@ -41,12 +68,16 @@
             <div class="reference-box">
               <h3>Transportation</h3>
               <p v-if="!linkedProductsForDay(day.dayNumber).transportation.length" class="empty-line">No linked transportation.</p>
-              <p v-for="record in linkedProductsForDay(day.dayNumber).transportation" :key="record.recordId">{{ record.route }}</p>
+              <p v-for="record in linkedProductsForDay(day.dayNumber).transportation" :key="record.recordId">
+                {{ record.route }} / {{ record.carType }} / {{ record.totalPax }} pax / {{ record.totalLuggage }} luggage
+              </p>
             </div>
             <div class="reference-box">
               <h3>VISA</h3>
               <p v-if="!linkedProductsForDay(day.dayNumber).visas.length" class="empty-line">No linked VISA.</p>
-              <p v-for="record in linkedProductsForDay(day.dayNumber).visas" :key="record.recordId">{{ record.productName }}</p>
+              <p v-for="record in linkedProductsForDay(day.dayNumber).visas" :key="record.recordId">
+                {{ record.visaOption }} / {{ record.serviceOption }}
+              </p>
             </div>
           </div>
         </div>
@@ -57,9 +88,12 @@
 
 <script setup lang="ts">
 import type { ItineraryDay, LinkedDayProducts } from "~/composables/useItineraryPackageBuilder";
+import type { BaliLocation, ItineraryTag } from "~/data/pricing";
 
 defineProps<{
   itineraryDays: ItineraryDay[];
+  baliLocationList: BaliLocation[];
+  itineraryTagList: ItineraryTag[];
   linkedProductsForDay: (dayNumber: number) => LinkedDayProducts;
 }>();
 </script>

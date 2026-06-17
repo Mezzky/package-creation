@@ -7,7 +7,6 @@
           <div class="status-pill">
             <span>{{ totalDays }} {{ totalDays === 1 ? "day" : "days" }}</span>
             <span>{{ totalNights }} {{ totalNights === 1 ? "night" : "nights" }}</span>
-            <span>{{ guestCount }} {{ guestCount === 1 ? "guest" : "guests" }}</span>
           </div>
         </div>
 
@@ -27,10 +26,6 @@
           <div class="field">
             <label for="totalNights">Nights</label>
             <input id="totalNights" :value="totalNights" type="number" min="0" step="1" inputmode="numeric" @input="setTotalNights(Number(($event.target as HTMLInputElement).value) || 0)">
-          </div>
-          <div class="field">
-            <label for="guestCount">Guests</label>
-            <input id="guestCount" v-model.number="guestCount" type="number" min="0" step="1" inputmode="numeric">
           </div>
         </div>
       </div>
@@ -57,9 +52,10 @@
             :visas="visas"
             :accommodation-list="accommodationList"
             :activity-list="activityList"
-            :vehicle-list="vehicleList"
-            :visa-list="visaList"
-            :room-types="roomTypes"
+            :car-type-list="carTypeList"
+            :visa-permit-option-list="visaPermitOptionList"
+            :visa-service-option-list="visaServiceOptionList"
+            :price-type-list="roomTypes"
             :format-currency="formatCurrency"
             :accommodation-nights="accommodationNights"
             :accommodation-selling="accommodationSelling"
@@ -81,6 +77,8 @@
         <div v-show="activeTab === 'itinerary'" class="tab-panel active">
           <ItineraryPresentationPanel
             :itinerary-days="itineraryDays"
+            :bali-location-list="baliLocationList"
+            :itinerary-tag-list="itineraryTagList"
             :linked-products-for-day="linkedProductsForDay"
           />
         </div>
@@ -90,7 +88,6 @@
         v-model:markup-percent="markupPercent"
         :total-days="totalDays"
         :total-nights="totalNights"
-        :guest-count="guestCount"
         :totals="totals"
         :package-output="packageOutput"
         :format-currency="formatCurrency"
@@ -111,14 +108,16 @@ const activeTab = ref("products");
 const {
   accommodationList,
   activityList,
-  vehicleList,
-  visaList,
+  carTypeList,
+  visaPermitOptionList,
+  visaServiceOptionList,
   roomTypes,
+  baliLocationList,
+  itineraryTagList,
   packageName,
   destination,
   totalDays,
   totalNights,
-  guestCount,
   markupPercent,
   accommodations,
   activities,
