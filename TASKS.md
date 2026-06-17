@@ -10,6 +10,13 @@
 - Added print styles so generated package summaries can be saved as PDF cleanly.
 - Converted the package calculator into a Nuxt app with Vue components, typed data, a pricing composable, Nuxt Icon, and Lucide icons.
 - Added a README with local development and production build commands.
+- Reworked the active Nuxt app into the updated centralized package builder architecture from `PRD.md`.
+- Moved Accommodation, Activities, Transportation, and VISA into package-level product records.
+- Changed itinerary days so they only contain title and description, with references generated from linked product records.
+- Added multi-day accommodation records with Start Day / End Day and automatic nights calculation.
+- Added route-based transportation with From Location / To Location.
+- Added supplier cost, selling price, package total cost, markup, selling price, profit, and price per guest.
+- Added day subtotals, category totals, markup, manual adjustment, selling price, price per guest, and frontend-ready JSON export.
 
 ## Next Improvements
 
@@ -20,6 +27,7 @@
 - Add optional share links for WhatsApp or email once the final sales workflow is confirmed.
 - Decide whether to remove the legacy `package-creation-pricing.html` static file after the Nuxt version is approved.
 - Configure deployment target for Nuxt, such as Node server, static generation, or hosting provider preset.
+- Connect itinerary products to real backend modules once Accommodation, Activity, Transportation, and VISA APIs are available.
 
 ## Research Notes
 

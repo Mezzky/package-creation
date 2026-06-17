@@ -1,6 +1,6 @@
 # LuxBali Package Creation
 
-Nuxt package-pricing calculator for LuxBali travel packages.
+Nuxt centralized travel package builder for LuxBali travel packages.
 
 ## Stack
 
@@ -36,15 +36,15 @@ node .output/server/index.mjs
 
 ## Project Structure
 
-- `app/components/PackageCalculator.vue` - main calculator screen
-- `app/components/AppTopbar.vue` - logo, title, and package setup inputs
-- `app/components/HotelCard.vue` - accommodation card and room-rate inputs
-- `app/components/SummaryPanel.vue` - totals, markup, quote output, copy, print, reset
-- `app/composables/usePackagePricing.ts` - pricing state, totals, autosave, reset, export actions
+- `app/components/ItineraryBuilder.vue` - main centralized package builder screen
+- `app/components/ProductModulesPanel.vue` - package-level Accommodation, Activity, Transportation, and VISA records
+- `app/components/ItineraryPresentationPanel.vue` - day-by-day itinerary content with generated product references
+- `app/components/CentralPricingSummary.vue` - package cost, selling price, markup, profit, JSON output, print, reset
+- `app/composables/useItineraryPackageBuilder.ts` - centralized product records, itinerary references, pricing, frontend JSON output, autosave
 - `app/data/pricing.ts` - hotel, visa, activity, vehicle, and room-type data
 - `app/assets/css/main.css` - global UI styles
 - `public/logo-luxbali.png` - Nuxt-served logo asset
 
 ## Notes
 
-The calculator defaults to a blank quote: zero guests, zero nights, no selected services, and zero fees.
+The active app follows the updated PRD: package-level products own pricing, itinerary days only own title/description and display generated product references.

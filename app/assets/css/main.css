@@ -97,6 +97,10 @@ h1 {
   align-items: end;
 }
 
+.package-setup-grid {
+  grid-template-columns: minmax(220px, 1.2fr) minmax(150px, 0.8fr) repeat(3, minmax(100px, 0.45fr));
+}
+
 .workspace {
   width: min(1380px, calc(100% - 32px));
   margin: 24px auto 48px;
@@ -212,6 +216,11 @@ textarea {
   outline: none;
 }
 
+textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
 select {
   appearance: none;
   -webkit-appearance: none;
@@ -251,6 +260,253 @@ textarea:focus {
   border-radius: var(--radius);
   background: #ffffff;
   overflow: hidden;
+}
+
+.itinerary-day-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.itinerary-day-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  background: #fafafa;
+  border-bottom: 1px solid var(--line);
+}
+
+.day-title-group {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.day-number {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-strong);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.day-title-input {
+  min-height: 42px;
+  font-weight: 700;
+}
+
+.itinerary-day-body {
+  display: grid;
+  gap: 18px;
+  padding: 14px;
+}
+
+.component-toolbar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.component-toolbar .button-secondary {
+  min-height: 40px;
+  padding: 8px 9px;
+  font-size: 13px;
+}
+
+.day-component-section {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fcfcfc;
+}
+
+.day-component-section h3 {
+  color: #18181b;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.empty-line {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.component-row {
+  display: grid;
+  gap: 10px;
+  align-items: end;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+}
+
+.accommodation-row {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.activity-row {
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+}
+
+.transport-row {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.visa-row {
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+}
+
+.component-row .icon-button {
+  width: 100%;
+}
+
+.day-total-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  color: #18181b;
+  font-weight: 800;
+}
+
+.day-breakdown-list {
+  display: grid;
+  gap: 8px;
+  max-height: 240px;
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fafafa;
+}
+
+.day-breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #3f3f46;
+  font-size: 13px;
+}
+
+.product-modules {
+  display: grid;
+  gap: 16px;
+}
+
+.module-section {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fcfcfc;
+}
+
+.module-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.module-heading h2 {
+  color: #18181b;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.record-card {
+  display: grid;
+  gap: 10px;
+  align-items: end;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+}
+
+.accommodation-record {
+  grid-template-columns: repeat(auto-fit, minmax(126px, 1fr));
+}
+
+.activity-record,
+.transport-record,
+.visa-record {
+  grid-template-columns: repeat(auto-fit, minmax(126px, 1fr));
+}
+
+.record-card .icon-button {
+  width: 100%;
+}
+
+.record-total {
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fafafa;
+  color: #18181b;
+  font-weight: 800;
+}
+
+.record-total span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.itinerary-presentation-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.reference-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.reference-box {
+  display: grid;
+  gap: 6px;
+  min-height: 96px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fafafa;
+}
+
+.reference-box h3 {
+  color: #18181b;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.reference-box p {
+  color: #3f3f46;
+  font-size: 13px;
 }
 
 .hotel-card-header {
@@ -564,6 +820,15 @@ textarea:focus {
   .summary-panel { position: static; }
   .setup-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .setup-grid .field:first-child { grid-column: 1 / -1; }
+
+  .component-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .package-setup-grid,
+  .reference-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
@@ -576,10 +841,20 @@ textarea:focus {
   .form-grid,
   .form-grid.three,
   .setup-grid,
+  .package-setup-grid,
   .adjustments,
   .actions,
-  .hotel-card-header {
+  .hotel-card-header,
+  .itinerary-day-header,
+  .day-title-group,
+  .component-toolbar,
+  .module-heading,
+  .reference-grid {
     grid-template-columns: 1fr;
+  }
+
+  .module-heading {
+    display: grid;
   }
 
   .panel-actions,
@@ -588,6 +863,14 @@ textarea:focus {
   .rate-grid {
     grid-template-columns: 1fr;
     gap: 8px 10px;
+  }
+
+  .component-row,
+  .accommodation-row,
+  .activity-row,
+  .transport-row,
+  .visa-row {
+    grid-template-columns: 1fr;
   }
 
   .rate-row {

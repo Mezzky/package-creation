@@ -1,3 +1,3 @@
 <template>
-  <PackageCalculator />
+  <ItineraryBuilder />
 </template>
