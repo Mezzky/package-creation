@@ -10,33 +10,8 @@
 
 [36mi[39m Nuxt Icon server bundle mode is set to [36mlocal[39m
 [32m√[39m Nuxt Icon discovered local-installed 1 collections: lucide
-[32m√[39m Vite client built in 46ms
-[32m√[39m Vite server built in 20ms
-[90m[[90mnitro[90m][39m [32m√[39m Nuxt Nitro server built in 1167ms
+[32m√[39m Vite client built in 38ms
+[32m√[39m Vite server built in 11ms
+[90m[[90mnitro[90m][39m [32m√[39m Nuxt Nitro server built in 1044ms
 [36mi[39m Vite server warmed up in 1ms
-[36mi[39m Vite client warmed up in 3ms
-[36mi[39m [32mhmr update [39m[2m/components/PackageCalculator.vue[22m
-[36mi[39m [32mhmr update [39m[2m/@id/virtual:nuxt:C%3A%2FUsers%2FUser%2FDocuments%2FPackage%20Creation%2F.nuxt%2Froutes.mjs[22m
-[36mi[39m [32mhmr update [39m[2m/components/AppTopbar.vue[22m
-[36mi[39m [32mhmr update [39m[2m/@id/virtual:nuxt:C%3A%2FUsers%2FUser%2FDocuments%2FPackage%20Creation%2F.nuxt%2Froutes.mjs[22m
-[36mi[39m [32mhmr update [39m[2m/components/PackageCalculator.vue[22m
-[36mi[39m [32mhmr update [39m[2m/@id/virtual:nuxt:C%3A%2FUsers%2FUser%2FDocuments%2FPackage%20Creation%2F.nuxt%2Froutes.mjs[22m
-[36mi[39m [32mhmr update [39m[2m/components/PackageCalculator.vue[22m
-[36mi[39m [32mhmr update [39m[2m/@id/virtual:nuxt:C%3A%2FUsers%2FUser%2FDocuments%2FPackage%20Creation%2F.nuxt%2Froutes.mjs[22m
-[36mi[39m [32mhmr update [39m[2m/components/HotelCard.vue[22m
-[36mi[39m [32mhmr update [39m[2m/@id/virtual:nuxt:C%3A%2FUsers%2FUser%2FDocuments%2FPackage%20Creation%2F.nuxt%2Froutes.mjs[22m
-[36mi[39m [32mhmr update [39m[2m/components/PackageCalculator.vue, /components/HotelCard.vue[22m
-[36mi[39m [32mhmr update [39m[2m/@id/virtual:nuxt:C%3A%2FUsers%2FUser%2FDocuments%2FPackage%20Creation%2F.nuxt%2Froutes.mjs[22m
-[36mi[39m [32mhmr update [39m[2m/components/PackageCalculator.vue, /components/HotelCard.vue[22m
-[36mi[39m [32mhmr update [39m[2m/components/PackageCalculator.vue, /components/HotelCard.vue[22m
-[36mi[39m [32mhmr update [39m[2m/components/PackageCalculator.vue, /components/HotelCard.vue[22m
-[36mi[39m [32mhmr update [39m[2m/@id/virtual:nuxt:C%3A%2FUsers%2FUser%2FDocuments%2FPackage%20Creation%2F.nuxt%2Froutes.mjs[22m
-[36mi[39m [32mhmr update [39m[2m/assets/css/main.css?direct, /assets/css/main.css[22m
-[36mi[39m [32mpage reload [39m[2massets/css/main.css[22m
-[36mi[39m [32mhmr update [39m[2m/components/SummaryPanel.vue[22m
-[36mi[39m [32mhmr update [39m[2m/@id/virtual:nuxt:C%3A%2FUsers%2FUser%2FDocuments%2FPackage%20Creation%2F.nuxt%2Froutes.mjs[22m
-[36mi[39m [32mhmr update [39m[2m/components/PackageCalculator.vue, /components/HotelCard.vue[22m
-[36mi[39m [32mhmr update [39m[2m/@id/virtual:nuxt:C%3A%2FUsers%2FUser%2FDocuments%2FPackage%20Creation%2F.nuxt%2Froutes.mjs[22m
-[32m√[39m Vite server hmr 19 files in 0.527ms
-[36mi[39m [32mhmr update [39m[2m/assets/css/main.css?direct, /assets/css/main.css[22m
-[36mi[39m [32mpage reload [39m[2massets/css/main.css[22m
+[36mi[39m Vite client warmed up in 2ms
