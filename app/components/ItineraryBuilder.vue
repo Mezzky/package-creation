@@ -16,16 +16,12 @@
             <input id="packageName" v-model="packageName" type="text" autocomplete="off">
           </div>
           <div class="field">
-            <label for="destination">Destination</label>
-            <input id="destination" v-model="destination" type="text" autocomplete="off">
-          </div>
-          <div class="field">
             <label for="totalDays">Days</label>
             <input id="totalDays" :value="totalDays" type="number" min="1" step="1" inputmode="numeric" @input="setTotalDays(Number(($event.target as HTMLInputElement).value) || 1)">
           </div>
           <div class="field">
             <label for="totalNights">Nights</label>
-            <input id="totalNights" :value="totalNights" type="number" min="0" step="1" inputmode="numeric" @input="setTotalNights(Number(($event.target as HTMLInputElement).value) || 0)">
+            <input id="totalNights" :value="totalNights" type="number" min="0" step="1" inputmode="numeric" readonly>
           </div>
         </div>
       </div>
@@ -34,9 +30,13 @@
     <main class="workspace">
       <section class="main-panel" aria-label="Central package builder">
         <nav class="tabs" aria-label="Package builder tabs">
-          <button class="tab-button" type="button" :aria-selected="activeTab === 'products'" @click="activeTab = 'products'">
+          <button class="tab-button" type="button" :aria-selected="activeTab === 'accommodation'" @click="activeTab = 'accommodation'">
+            <Icon name="lucide:hotel" size="18" />
+            <span>Accommodation</span>
+          </button>
+          <button class="tab-button" type="button" :aria-selected="activeTab === 'other'" @click="activeTab = 'other'">
             <Icon name="lucide:boxes" size="18" />
-            <span>Products</span>
+            <span>Other Products</span>
           </button>
           <button class="tab-button" type="button" :aria-selected="activeTab === 'itinerary'" @click="activeTab = 'itinerary'">
             <Icon name="lucide:calendar-days" size="18" />
@@ -44,8 +44,12 @@
           </button>
         </nav>
 
-        <div v-show="activeTab === 'products'" class="tab-panel active">
+        <div v-show="activeTab === 'accommodation'" class="tab-panel active">
           <ProductModulesPanel
+            mode="accommodation"
+            :country-list="countryList"
+            :regency-list="regencyList"
+            :state-list="stateList"
             :accommodations="accommodations"
             :activities="activities"
             :transportation="transportation"
@@ -56,6 +60,42 @@
             :visa-permit-option-list="visaPermitOptionList"
             :visa-service-option-list="visaServiceOptionList"
             :price-type-list="roomTypes"
+            :total-nights="totalNights"
+            :format-currency="formatCurrency"
+            :accommodation-nights="accommodationNights"
+            :accommodation-selling="accommodationSelling"
+            :activity-selling="activitySelling"
+            :transport-selling="transportSelling"
+            :visa-selling="visaSelling"
+            @add-accommodation="addAccommodation"
+            @add-activity="addActivity"
+            @add-transportation="addTransportation"
+            @add-visa="addVisa"
+            @remove-record="removeRecord"
+            @apply-accommodation="applyAccommodationDefaults"
+            @apply-activity="applyActivityDefaults"
+            @apply-transportation="applyTransportationDefaults"
+            @apply-visa="applyVisaDefaults"
+          />
+        </div>
+
+        <div v-show="activeTab === 'other'" class="tab-panel active">
+          <ProductModulesPanel
+            mode="other"
+            :accommodations="accommodations"
+            :activities="activities"
+            :transportation="transportation"
+            :visas="visas"
+            :accommodation-list="accommodationList"
+            :country-list="countryList"
+            :regency-list="regencyList"
+            :state-list="stateList"
+            :activity-list="activityList"
+            :car-type-list="carTypeList"
+            :visa-permit-option-list="visaPermitOptionList"
+            :visa-service-option-list="visaServiceOptionList"
+            :price-type-list="roomTypes"
+            :total-nights="totalNights"
             :format-currency="formatCurrency"
             :accommodation-nights="accommodationNights"
             :accommodation-selling="accommodationSelling"
@@ -79,6 +119,7 @@
             :itinerary-days="itineraryDays"
             :bali-location-list="baliLocationList"
             :itinerary-tag-list="itineraryTagList"
+            :total-days="totalDays"
             :linked-products-for-day="linkedProductsForDay"
           />
         </div>
@@ -103,10 +144,13 @@
 </template>
 
 <script setup lang="ts">
-const activeTab = ref("products");
+const activeTab = ref("accommodation");
 
 const {
   accommodationList,
+  countryList,
+  regencyList,
+  stateList,
   activityList,
   carTypeList,
   visaPermitOptionList,
@@ -115,7 +159,6 @@ const {
   baliLocationList,
   itineraryTagList,
   packageName,
-  destination,
   totalDays,
   totalNights,
   markupPercent,
@@ -129,7 +172,6 @@ const {
   toastVisible,
   totals,
   setTotalDays,
-  setTotalNights,
   addAccommodation,
   addActivity,
   addTransportation,

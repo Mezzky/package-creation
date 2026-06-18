@@ -1,10 +1,30 @@
-import { accommodationList, activityList, vehicleList, visaList, roomTypes, baliLocationList, itineraryTagList, carTypeList, visaPermitOptionList, visaServiceOptionList } from "~/data/pricing";
+import { accommodationList, activityList, vehicleList, visaList, roomTypes, baliLocationList, countryList, regencyList, stateList, itineraryTagList, carTypeList, visaPermitOptionList, visaServiceOptionList } from "~/data/pricing";
+import type { RoomTypeKey } from "~/data/pricing";
+
+export type AccommodationPriceTypes = Record<RoomTypeKey, number>;
+export type AccommodationAdditionalPrices = {
+  extraBedAdult: number;
+  extraBedChild: number;
+  childNoBed: number;
+};
+
+const createAccommodationPriceTypes = (defaultPrice = 0, saved?: Partial<AccommodationPriceTypes>): AccommodationPriceTypes => ({
+  single: amount(saved?.single ?? defaultPrice),
+  double: amount(saved?.double ?? defaultPrice),
+  tripleA: amount(saved?.tripleA ?? defaultPrice),
+  tripleB: amount(saved?.tripleB ?? defaultPrice),
+  childNoBed: amount(saved?.childNoBed ?? defaultPrice)
+});
 
 export type AccommodationRecord = {
   id: number;
   productId: string;
+  countryId: string;
+  regencyId: string;
+  stateId: string;
   roomTypeId: string;
-  priceType: string;
+  additionalPrices: AccommodationAdditionalPrices;
+  priceTypePrices: AccommodationPriceTypes;
   startDay: number;
   endDay: number;
   pricePerNight: number;
@@ -14,6 +34,9 @@ export type ActivityRecord = {
   id: number;
   productId: string;
   ticketId: string;
+  nationality: "general" | "foreign" | "domestic" | "";
+  ticketType: "general" | "adult" | "child" | "";
+  includeTransport: boolean;
   dayNumber: number;
   price: number;
 };
@@ -59,7 +82,7 @@ type LinkedAccommodation = {
   productId: string;
   productName: string;
   roomType: string;
-  priceType: string;
+  priceTypePrices: AccommodationPriceTypes;
   startDay: number;
   endDay: number;
   pricePerNight: number;
@@ -71,6 +94,9 @@ type LinkedActivity = {
   productName: string;
   ticketId: string;
   ticketName: string;
+  nationality: string;
+  ticketType: string;
+  includeTransport: boolean;
   dayNumber: number;
   price: number;
 };
@@ -133,7 +159,6 @@ const positiveDay = (value: number, fallback = 1) => Math.max(1, Number.isFinite
 
 export const useItineraryPackageBuilder = () => {
   const packageName = ref("");
-  const destination = ref("Bali");
   const totalDays = ref(1);
   const totalNights = ref(0);
   const markupPercent = ref(0);
@@ -168,7 +193,7 @@ export const useItineraryPackageBuilder = () => {
   const syncItineraryDays = () => {
     const count = positiveDay(totalDays.value);
     totalDays.value = count;
-    totalNights.value = Math.max(0, Math.min(totalNights.value, count - 1));
+    totalNights.value = Math.max(0, count - 1);
 
     while (itineraryDays.value.length < count) {
       itineraryDays.value.push(createDay(itineraryDays.value.length + 1));
@@ -178,7 +203,20 @@ export const useItineraryPackageBuilder = () => {
     }
     itineraryDays.value.forEach((day, index) => {
       day.dayNumber = index + 1;
+      if (day.dayNumber !== count && day.tagId === "check-out") day.tagId = "";
+      if (day.dayNumber === count) day.tagId = "check-out";
     });
+
+    accommodations.value.forEach((record) => {
+      if (totalNights.value === 0) {
+        record.startDay = 0;
+        record.endDay = 0;
+        return;
+      }
+      record.startDay = Math.min(totalNights.value, Math.max(1, record.startDay));
+      record.endDay = Math.min(totalNights.value, Math.max(record.startDay, record.endDay));
+    });
+    syncAccommodationLocations();
   };
 
   const setTotalDays = (value: number) => {
@@ -194,10 +232,14 @@ export const useItineraryPackageBuilder = () => {
     accommodations.value.push({
       id: nextId(),
       productId: "",
+      countryId: "",
+      regencyId: "",
+      stateId: "",
       roomTypeId: "",
-      priceType: "",
-      startDay: 1,
-      endDay: Math.min(2, totalDays.value),
+      additionalPrices: { extraBedAdult: 0, extraBedChild: 0, childNoBed: 0 },
+      priceTypePrices: createAccommodationPriceTypes(),
+      startDay: totalNights.value > 0 ? 1 : 0,
+      endDay: totalNights.value > 0 ? Math.min(2, totalNights.value) : 0,
       pricePerNight: 0
     });
     showToast("Accommodation record added.");
@@ -208,6 +250,9 @@ export const useItineraryPackageBuilder = () => {
       id: nextId(),
       productId: "",
       ticketId: "",
+      nationality: "",
+      ticketType: "",
+      includeTransport: false,
       dayNumber: 1,
       price: 0
     });
@@ -249,12 +294,28 @@ export const useItineraryPackageBuilder = () => {
     const product = accommodationList.find((item) => item.id === record.productId);
     if (!product) {
       record.pricePerNight = 0;
+      record.additionalPrices = { extraBedAdult: 0, extraBedChild: 0, childNoBed: 0 };
+      record.priceTypePrices = createAccommodationPriceTypes();
       return;
     }
     if (!product.roomTypes.some((room) => room.id === record.roomTypeId)) {
       record.roomTypeId = product.roomTypes[0]?.id || "";
     }
-    record.pricePerNight = product.roomTypes.find((room) => room.id === record.roomTypeId)?.pricePerNight || 0;
+    const room = product.roomTypes.find((item) => item.id === record.roomTypeId);
+    record.pricePerNight = room?.pricePerNight || 0;
+    record.additionalPrices = {
+      extraBedAdult: room?.extraBedAdult || 0,
+      extraBedChild: room?.extraBedChild || 0,
+      childNoBed: room?.childNoBed || 0
+    };
+    record.priceTypePrices = {
+      single: record.pricePerNight,
+      double: record.pricePerNight,
+      tripleA: record.pricePerNight + record.additionalPrices.extraBedAdult,
+      tripleB: record.pricePerNight + record.additionalPrices.extraBedChild,
+      childNoBed: record.additionalPrices.childNoBed
+    };
+    syncAccommodationLocations();
   };
 
   const applyActivityDefaults = (record: ActivityRecord) => {
@@ -264,9 +325,8 @@ export const useItineraryPackageBuilder = () => {
       record.price = 0;
       return;
     }
-    if (!product.tickets.some((ticket) => ticket.id === record.ticketId)) {
-      record.ticketId = product.tickets[0]?.id || "";
-    }
+    const matchingTickets = product.tickets.filter((ticket) => ticket.nationality === record.nationality && ticket.ticketType === record.ticketType);
+    if (!matchingTickets.some((ticket) => ticket.id === record.ticketId)) record.ticketId = matchingTickets[0]?.id || "";
     const ticket = product.tickets.find((item) => item.id === record.ticketId);
     record.price = ticket?.price || 0;
   };
@@ -285,9 +345,21 @@ export const useItineraryPackageBuilder = () => {
     record.price = permit?.prices[record.serviceOptionId] || 0;
   };
 
-  const accommodationNights = (record: AccommodationRecord) => Math.max(0, positiveDay(record.endDay, record.startDay) - positiveDay(record.startDay));
+  const accommodationNights = (record: AccommodationRecord) => {
+    if (totalNights.value === 0) return 0;
+    return Math.max(0, record.endDay - record.startDay + 1);
+  };
   const accommodationAppliesToDay = (record: AccommodationRecord, dayNumber: number) => {
-    return dayNumber >= positiveDay(record.startDay) && dayNumber <= positiveDay(record.endDay);
+    return dayNumber < totalDays.value && dayNumber >= record.startDay && dayNumber <= record.endDay;
+  };
+
+  const syncAccommodationLocations = () => {
+    itineraryDays.value.forEach((day) => {
+      const linkedAccommodation = accommodations.value.find((record) => {
+        return Boolean(record.productId && record.stateId) && accommodationAppliesToDay(record, day.dayNumber);
+      });
+      day.locationId = linkedAccommodation?.stateId || "";
+    });
   };
 
   const accommodationCost = (record: AccommodationRecord) => amount(record.pricePerNight) * accommodationNights(record);
@@ -337,7 +409,7 @@ export const useItineraryPackageBuilder = () => {
   });
 
   const referencesForDay = (dayNumber: number): PackageReferences => ({
-    accommodations: accommodations.value.filter((item) => accommodationAppliesToDay(item, dayNumber)),
+    accommodations: dayNumber === totalDays.value ? [] : accommodations.value.filter((item) => accommodationAppliesToDay(item, dayNumber)),
     activities: activities.value.filter((item) => item.dayNumber === dayNumber),
     transportation: transportation.value.filter((item) => item.dayNumber === dayNumber)
   });
@@ -347,7 +419,6 @@ export const useItineraryPackageBuilder = () => {
   const getVehicleName = (id: string) => vehicleList.find((item) => item.id === id)?.name || "No transportation selected";
   const getVisaName = (id: string) => visaList.find((item) => item.id === id)?.name || "No VISA selected";
   const getHotelRoomTypeName = (productId: string, roomTypeId: string) => accommodationList.find((item) => item.id === productId)?.roomTypes.find((room) => room.id === roomTypeId)?.name || "No room type selected";
-  const getPriceTypeLabel = (id: string) => roomTypes.find((item) => item.key === id)?.label || "No price type selected";
   const getLocationName = (id: string) => baliLocationList.find((item) => item.id === id)?.name || "";
   const getTagLabel = (id: string) => itineraryTagList.find((item) => item.id === id)?.label || "";
   const getTicketName = (productId: string, ticketId: string) => activityList.find((item) => item.id === productId)?.tickets.find((ticket) => ticket.id === ticketId)?.name || "No ticket selected";
@@ -372,7 +443,7 @@ export const useItineraryPackageBuilder = () => {
         productId: item.productId,
         productName: getAccommodationName(item.productId),
         roomType: getHotelRoomTypeName(item.productId, item.roomTypeId),
-        priceType: getPriceTypeLabel(item.priceType),
+        priceTypePrices: item.priceTypePrices,
         startDay: item.startDay,
         endDay: item.endDay,
         pricePerNight: item.pricePerNight
@@ -383,6 +454,9 @@ export const useItineraryPackageBuilder = () => {
         productName: getActivityName(item.productId),
         ticketId: item.ticketId,
         ticketName: getTicketName(item.productId, item.ticketId),
+        nationality: item.nationality,
+        ticketType: item.ticketType,
+        includeTransport: item.includeTransport,
         dayNumber: item.dayNumber,
         price: item.price
       })),
@@ -401,22 +475,21 @@ export const useItineraryPackageBuilder = () => {
           price: item.price
         };
       }),
-      visas: linkedVisas()
+      visas: dayNumber === 1 ? linkedVisas() : []
     };
   };
 
   const frontendPackage = computed(() => ({
     package: {
       name: packageName.value || "Untitled Package",
-      destination: destination.value,
       duration: `${totalDays.value} Days / ${totalNights.value} Nights`
     },
     pricing: totals.value,
     accommodationSummary: accommodations.value.map((item) => ({
       product: getAccommodationName(item.productId),
       roomType: getHotelRoomTypeName(item.productId, item.roomTypeId),
-      priceType: getPriceTypeLabel(item.priceType),
-      pricingBasis: "Selected hotel room type per night with team price type identifier",
+      priceTypePrices: item.priceTypePrices,
+      pricingBasis: "Selected hotel room type per night with editable price type rates",
       startDay: item.startDay,
       endDay: item.endDay,
       nights: accommodationNights(item),
@@ -426,6 +499,8 @@ export const useItineraryPackageBuilder = () => {
     activitySummary: activities.value.map((item) => ({
       product: getActivityName(item.productId),
       ticketType: getTicketName(item.productId, item.ticketId),
+      nationality: item.nationality,
+      includeTransport: item.includeTransport,
       dayNumber: item.dayNumber,
       price: item.price
     })),
@@ -501,7 +576,6 @@ export const useItineraryPackageBuilder = () => {
 
   const resetBuilder = () => {
     packageName.value = "";
-    destination.value = "Bali";
     totalDays.value = 1;
     totalNights.value = 0;
     markupPercent.value = 0;
@@ -527,7 +601,6 @@ export const useItineraryPackageBuilder = () => {
 
   const serializableState = computed(() => ({
     packageName: packageName.value,
-    destination: destination.value,
     totalDays: totalDays.value,
     totalNights: totalNights.value,
     markupPercent: markupPercent.value,
@@ -552,20 +625,34 @@ export const useItineraryPackageBuilder = () => {
     collapsed: Boolean(day.collapsed)
   });
 
-  const normalizeAccommodation = (record: Partial<AccommodationRecord> & { priceType?: string; roomType?: string; quantity?: number; supplierCost?: number; sellingPrice?: number }): AccommodationRecord => ({
-    id: Number(record.id) || nextId(),
-    productId: record.productId || "",
-    roomTypeId: record.roomTypeId || record.priceType || record.roomType || "",
-    priceType: record.priceType || "",
-    startDay: positiveDay(Number(record.startDay) || 1),
-    endDay: positiveDay(Number(record.endDay) || Number(record.startDay) || 1),
-    pricePerNight: amount(Number(record.pricePerNight ?? record.sellingPrice ?? record.supplierCost) || 0)
-  });
+  const normalizeAccommodation = (record: Partial<AccommodationRecord> & { priceType?: string; roomType?: string; quantity?: number; supplierCost?: number; sellingPrice?: number }): AccommodationRecord => {
+    const pricePerNight = amount(Number(record.pricePerNight ?? record.sellingPrice ?? record.supplierCost) || 0);
+    return {
+      id: Number(record.id) || nextId(),
+      productId: record.productId || "",
+      countryId: record.countryId || accommodationList.find((hotel) => hotel.id === record.productId)?.countryId || "",
+      regencyId: record.regencyId || accommodationList.find((hotel) => hotel.id === record.productId)?.regencyId || "",
+      stateId: record.stateId || accommodationList.find((hotel) => hotel.id === record.productId)?.stateId || "",
+      roomTypeId: record.roomTypeId || record.roomType || "",
+      additionalPrices: {
+        extraBedAdult: amount(record.additionalPrices?.extraBedAdult || 0),
+        extraBedChild: amount(record.additionalPrices?.extraBedChild || 0),
+        childNoBed: amount(record.additionalPrices?.childNoBed || 0)
+      },
+      priceTypePrices: createAccommodationPriceTypes(pricePerNight, record.priceTypePrices),
+      startDay: positiveDay(Number(record.startDay) || 1),
+      endDay: positiveDay(Number(record.endDay) || Number(record.startDay) || 1),
+      pricePerNight
+    };
+  };
 
   const normalizeActivity = (record: Partial<ActivityRecord> & { quantity?: number; supplierCost?: number; sellingPrice?: number }): ActivityRecord => ({
     id: Number(record.id) || nextId(),
     productId: record.productId || "",
     ticketId: record.ticketId || "",
+    nationality: record.nationality || "",
+    ticketType: record.ticketType || "",
+    includeTransport: Boolean(record.includeTransport),
     dayNumber: positiveDay(Number(record.dayNumber) || 1),
     price: amount(Number(record.price ?? record.sellingPrice ?? record.supplierCost) || 0)
   });
@@ -598,9 +685,8 @@ export const useItineraryPackageBuilder = () => {
     try {
       const saved = JSON.parse(raw);
       packageName.value = saved.packageName || "";
-      destination.value = saved.destination || "Bali";
       totalDays.value = positiveDay(Number(saved.totalDays) || 1);
-      totalNights.value = amount(Number(saved.totalNights) || 0);
+      totalNights.value = Math.max(0, totalDays.value - 1);
       markupPercent.value = amount(Number(saved.markupPercent) || 0);
       accommodations.value = (saved.accommodations || []).map(normalizeAccommodation);
       activities.value = (saved.activities || []).map(normalizeActivity);
@@ -627,6 +713,8 @@ export const useItineraryPackageBuilder = () => {
 
   onMounted(() => {
     restoreState();
+    syncAccommodationLocations();
+    watch(accommodations, syncAccommodationLocations, { deep: true });
     watch(serializableState, (value) => {
       if (restored.value) localStorage.setItem(storageKey, JSON.stringify(value));
     }, { deep: true });
@@ -634,6 +722,9 @@ export const useItineraryPackageBuilder = () => {
 
   return {
     accommodationList,
+    countryList,
+    regencyList,
+    stateList,
     activityList,
     carTypeList,
     visaPermitOptionList,
@@ -642,7 +733,6 @@ export const useItineraryPackageBuilder = () => {
     itineraryTagList,
     roomTypes,
     packageName,
-    destination,
     totalDays,
     totalNights,
     markupPercent,
@@ -689,7 +779,6 @@ export const useItineraryPackageBuilder = () => {
     getLocationName,
     getTagLabel,
     getHotelRoomTypeName,
-    getPriceTypeLabel,
     createPackageOutput,
     copyFrontendJson,
     printPackage,

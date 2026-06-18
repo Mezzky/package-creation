@@ -40,7 +40,7 @@
             </div>
             <div class="field">
               <label :for="`day-${day.id}-tag`">Tags</label>
-              <select :id="`day-${day.id}-tag`" v-model="day.tagId">
+              <select :id="`day-${day.id}-tag`" v-model="day.tagId" :disabled="day.dayNumber === totalDays">
                 <option value="">Select tag</option>
                 <option v-for="tag in itineraryTagList" :key="tag.id" :value="tag.id">{{ tag.label }}</option>
               </select>
@@ -52,27 +52,32 @@
             <textarea :id="`day-${day.id}-description`" v-model="day.description" placeholder="Describe the itinerary flow for this day"></textarea>
           </div>
 
-          <div class="reference-grid">
+          <div class="reference-grid" :class="{ 'without-visa': day.dayNumber !== 1 }">
             <div class="reference-box">
               <h3>Accommodation</h3>
               <p v-if="!linkedProductsForDay(day.dayNumber).accommodations.length" class="empty-line">No linked accommodation.</p>
               <p v-for="record in linkedProductsForDay(day.dayNumber).accommodations" :key="record.recordId">
-                {{ record.productName }} / {{ record.roomType }} / {{ record.priceType }}
+                {{ record.productName }} / {{ record.roomType }}
               </p>
             </div>
             <div class="reference-box">
               <h3>Activities</h3>
               <p v-if="!linkedProductsForDay(day.dayNumber).activities.length" class="empty-line">No linked activities.</p>
-              <p v-for="record in linkedProductsForDay(day.dayNumber).activities" :key="record.recordId">{{ record.productName }}</p>
-            </div>
-            <div class="reference-box">
-              <h3>Transportation</h3>
-              <p v-if="!linkedProductsForDay(day.dayNumber).transportation.length" class="empty-line">No linked transportation.</p>
-              <p v-for="record in linkedProductsForDay(day.dayNumber).transportation" :key="record.recordId">
-                {{ record.route }} / {{ record.carType }} / {{ record.totalPax }} pax / {{ record.totalLuggage }} luggage
+              <p v-for="record in linkedProductsForDay(day.dayNumber).activities" :key="record.recordId">
+                {{ record.productName }} / {{ record.ticketName }}
               </p>
             </div>
             <div class="reference-box">
+              <h3>Transportation</h3>
+              <p v-if="!linkedProductsForDay(day.dayNumber).transportation.length && !linkedProductsForDay(day.dayNumber).activities.some((record) => record.includeTransport)" class="empty-line">No linked transportation.</p>
+              <p v-for="record in linkedProductsForDay(day.dayNumber).transportation" :key="record.recordId">
+                {{ record.route }} / {{ record.carType }} / {{ record.totalPax }} pax / {{ record.totalLuggage }} luggage
+              </p>
+              <p v-for="record in linkedProductsForDay(day.dayNumber).activities.filter((item) => item.includeTransport)" :key="`activity-transport-${record.recordId}`">
+                {{ record.productName }} / Included from Activity
+              </p>
+            </div>
+            <div v-if="day.dayNumber === 1" class="reference-box">
               <h3>VISA</h3>
               <p v-if="!linkedProductsForDay(day.dayNumber).visas.length" class="empty-line">No linked VISA.</p>
               <p v-for="record in linkedProductsForDay(day.dayNumber).visas" :key="record.recordId">
@@ -94,6 +99,7 @@ defineProps<{
   itineraryDays: ItineraryDay[];
   baliLocationList: BaliLocation[];
   itineraryTagList: ItineraryTag[];
+  totalDays: number;
   linkedProductsForDay: (dayNumber: number) => LinkedDayProducts;
 }>();
 </script>
