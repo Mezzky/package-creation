@@ -193,39 +193,48 @@
       </div>
       <div v-if="!transportation.length" class="empty-line">No transportation records.</div>
       <div v-for="item in transportation" :key="item.id" class="record-card transport-record">
-        <div class="field">
+        <div class="field transport-day-field">
           <label :for="`transport-${item.id}-day`">Day number</label>
           <input :id="`transport-${item.id}-day`" v-model.number="item.dayNumber" type="number" min="1" inputmode="numeric">
         </div>
-        <div class="field">
+        <div class="field transport-service-field">
+          <label :for="`transport-${item.id}-service`">Service Type</label>
+          <select :id="`transport-${item.id}-service`" v-model="item.serviceType">
+            <option value="">Select service</option>
+            <option value="full-day">Full Day</option>
+            <option value="check-in">Check In</option>
+            <option value="check-out">Check Out</option>
+          </select>
+        </div>
+        <div class="field transport-from-field">
           <label :for="`transport-${item.id}-from`">From location</label>
           <input :id="`transport-${item.id}-from`" v-model="item.fromLocation" type="text">
         </div>
-        <div class="field">
+        <div class="field transport-to-field">
           <label :for="`transport-${item.id}-to`">To location</label>
           <input :id="`transport-${item.id}-to`" v-model="item.toLocation" type="text">
         </div>
-        <div class="field">
+        <div class="field transport-car-field">
           <label :for="`transport-${item.id}-car`">Car type</label>
           <select :id="`transport-${item.id}-car`" v-model="item.carTypeId" @change="$emit('apply-transportation', item)">
             <option value="">Select car type</option>
             <option v-for="car in carTypeList" :key="car.id" :value="car.id">{{ car.name }}</option>
           </select>
         </div>
-        <div class="field">
+        <div class="field transport-pax-field">
           <label :for="`transport-${item.id}-pax`">Total pax</label>
           <input :id="`transport-${item.id}-pax`" v-model.number="item.totalPax" type="number" min="0" inputmode="numeric">
         </div>
-        <div class="field">
+        <div class="field transport-luggage-field">
           <label :for="`transport-${item.id}-luggage`">Total luggage</label>
           <input :id="`transport-${item.id}-luggage`" v-model.number="item.totalLuggage" type="number" min="0" inputmode="numeric">
         </div>
-        <div class="field">
+        <div class="field transport-price-field">
           <label :for="`transport-${item.id}-price`">Price</label>
           <input :id="`transport-${item.id}-price`" v-model.number="item.price" type="number" min="0" step="1000" inputmode="numeric">
         </div>
-        <div class="record-total"><span>Transport price</span><strong>{{ formatCurrency(transportSelling(item)) }}</strong></div>
-        <button class="icon-button button-danger" type="button" @click="$emit('remove-record', 'transport', item.id)">
+        <div class="record-total transport-total-field"><span>Transport price</span><strong>{{ formatCurrency(transportSelling(item)) }}</strong></div>
+        <button class="icon-button button-danger transport-delete-field" type="button" @click="$emit('remove-record', 'transport', item.id)">
           <Icon name="lucide:trash-2" size="16" />
         </button>
       </div>

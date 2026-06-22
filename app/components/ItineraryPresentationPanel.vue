@@ -71,7 +71,7 @@
               <h3>Transportation</h3>
               <p v-if="!linkedProductsForDay(day.dayNumber).transportation.length && !linkedProductsForDay(day.dayNumber).activities.some((record) => record.includeTransport)" class="empty-line">No linked transportation.</p>
               <p v-for="record in linkedProductsForDay(day.dayNumber).transportation" :key="record.recordId">
-                {{ record.route }} / {{ record.carType }} / {{ record.totalPax }} pax / {{ record.totalLuggage }} luggage
+                {{ formatServiceType(record.serviceType) }} / {{ record.route }} / {{ record.carType }} / {{ record.totalPax }} pax / {{ record.totalLuggage }} luggage
               </p>
               <p v-for="record in linkedProductsForDay(day.dayNumber).activities.filter((item) => item.includeTransport)" :key="`activity-transport-${record.recordId}`">
                 {{ record.productName }} / Included from Activity
@@ -102,4 +102,10 @@ defineProps<{
   totalDays: number;
   linkedProductsForDay: (dayNumber: number) => LinkedDayProducts;
 }>();
+
+const formatServiceType = (value: string) => ({
+  "full-day": "Full Day",
+  "check-in": "Check In",
+  "check-out": "Check Out"
+}[value] || "No service selected");
 </script>

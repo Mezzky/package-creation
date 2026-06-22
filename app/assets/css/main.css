@@ -635,8 +635,19 @@ textarea:focus {
 }
 
 .transport-record {
-  grid-template-columns: repeat(auto-fit, minmax(126px, 1fr));
+  grid-template-columns: repeat(12, minmax(0, 1fr));
 }
+
+.transport-day-field { grid-column: span 2; }
+.transport-service-field { grid-column: span 3; }
+.transport-from-field { grid-column: span 3; }
+.transport-to-field { grid-column: span 4; }
+.transport-car-field { grid-column: span 3; }
+.transport-pax-field { grid-column: span 2; }
+.transport-luggage-field { grid-column: span 2; }
+.transport-price-field { grid-column: span 2; }
+.transport-total-field { grid-column: span 2; }
+.transport-delete-field { grid-column: span 1; }
 
 .visa-record {
   grid-template-columns: minmax(220px, 1.2fr) minmax(220px, 1.2fr) minmax(140px, 0.7fr) minmax(126px, 0.7fr) 46px;

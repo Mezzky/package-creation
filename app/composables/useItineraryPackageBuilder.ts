@@ -44,6 +44,7 @@ export type ActivityRecord = {
 export type TransportationRecord = {
   id: number;
   dayNumber: number;
+  serviceType: "full-day" | "check-in" | "check-out" | "";
   fromLocation: string;
   toLocation: string;
   carTypeId: string;
@@ -104,6 +105,7 @@ type LinkedActivity = {
 type LinkedTransportation = {
   recordId: number;
   dayNumber: number;
+  serviceType: string;
   fromLocation: string;
   toLocation: string;
   route: string;
@@ -263,6 +265,7 @@ export const useItineraryPackageBuilder = () => {
     transportation.value.push({
       id: nextId(),
       dayNumber: 1,
+      serviceType: "",
       fromLocation: "",
       toLocation: "",
       carTypeId: "",
@@ -466,6 +469,7 @@ export const useItineraryPackageBuilder = () => {
         return {
           recordId: item.id,
           dayNumber: item.dayNumber,
+          serviceType: item.serviceType,
           fromLocation,
           toLocation,
           route: `${fromLocation} -> ${toLocation}`,
@@ -502,6 +506,7 @@ export const useItineraryPackageBuilder = () => {
       nationality: item.nationality,
       includeTransport: item.includeTransport,
       dayNumber: item.dayNumber,
+      serviceType: item.serviceType,
       price: item.price
     })),
     transportationSummary: transportation.value.map((item) => ({
@@ -660,6 +665,7 @@ export const useItineraryPackageBuilder = () => {
   const normalizeTransportation = (record: Partial<TransportationRecord> & { productId?: string; quantity?: number; supplierCost?: number; sellingPrice?: number }): TransportationRecord => ({
     id: Number(record.id) || nextId(),
     dayNumber: positiveDay(Number(record.dayNumber) || 1),
+    serviceType: record.serviceType || "",
     fromLocation: record.fromLocation || "",
     toLocation: record.toLocation || "",
     carTypeId: record.carTypeId || record.productId || "",
