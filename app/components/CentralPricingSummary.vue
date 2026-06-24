@@ -5,16 +5,15 @@
         <h2>Pricing Review</h2>
         <p class="small-note">{{ totalDays }} days, {{ totalNights }} nights</p>
       </div>
-      <div class="money-big">{{ formatCurrency(totals.sellingPrice) }}</div>
     </div>
 
     <div class="summary-body">
-      <div class="breakdown">
-        <div class="breakdown-row"><span>Accommodation cost</span><strong>{{ formatCurrency(totals.accommodation.cost) }}</strong></div>
-        <div class="breakdown-row"><span>Activity cost</span><strong>{{ formatCurrency(totals.activity.cost) }}</strong></div>
-        <div class="breakdown-row"><span>Transportation cost</span><strong>{{ formatCurrency(totals.transport.cost) }}</strong></div>
-        <div class="breakdown-row"><span>VISA cost</span><strong>{{ formatCurrency(totals.visa.cost) }}</strong></div>
-        <div class="breakdown-row accent"><span>Total package cost</span><strong>{{ formatCurrency(totals.totalCost) }}</strong></div>
+      <div class="pricing-review-list">
+        <div v-for="item in pricingReviewRows" :key="item.key" class="pricing-review-item">
+          <span>{{ item.label }}</span>
+          <strong>{{ formatCurrency(item.total) }}</strong>
+          <small>{{ formatCurrency(item.baseTotal) }} + {{ markupPercent }}% markup</small>
+        </div>
       </div>
 
       <div class="adjustments">
@@ -23,15 +22,9 @@
           <input id="markupPercent" :value="markupPercent" type="number" min="0" step="1" inputmode="numeric" @input="$emit('update:markupPercent', Number(($event.target as HTMLInputElement).value) || 0)">
         </div>
         <div class="field">
-          <span class="field-label">Markup amount</span>
-          <div class="readonly-value">{{ formatCurrency(totals.markup) }}</div>
+          <span class="field-label">Applied to</span>
+          <div class="readonly-value">All price types</div>
         </div>
-      </div>
-
-      <div class="breakdown">
-        <div class="breakdown-row"><span>Product selling subtotal</span><strong>{{ formatCurrency(totals.productSellingSubtotal) }}</strong></div>
-        <div class="breakdown-row"><span>Package selling price</span><strong>{{ formatCurrency(totals.sellingPrice) }}</strong></div>
-        <div class="breakdown-row"><span>Profit</span><strong>{{ formatCurrency(totals.profit) }}</strong></div>
       </div>
 
       <div class="actions">
@@ -65,10 +58,21 @@ type PricingTotals = {
   profit: number;
 };
 
+type PricingReviewRow = {
+  key: string;
+  label: string;
+  accommodationTotal: number;
+  otherProductsTotal: number;
+  baseTotal: number;
+  markup: number;
+  total: number;
+};
+
 defineProps<{
   totalDays: number;
   totalNights: number;
   totals: PricingTotals;
+  pricingReviewRows: PricingReviewRow[];
   markupPercent: number;
   packageOutput: string;
   formatCurrency: (value: number) => string;

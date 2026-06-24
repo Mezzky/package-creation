@@ -130,6 +130,7 @@
         :total-days="totalDays"
         :total-nights="totalNights"
         :totals="totals"
+        :pricing-review-rows="pricingReviewRows"
         :package-output="packageOutput"
         :format-currency="formatCurrency"
         @generate="createPackageOutput"
@@ -171,6 +172,7 @@ const {
   toastMessage,
   toastVisible,
   totals,
+  pricingReviewRows,
   setTotalDays,
   addAccommodation,
   addActivity,

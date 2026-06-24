@@ -51,7 +51,7 @@
         </div>
         <div class="field">
           <label :for="`accommodation-${item.id}-price`">Room Price</label>
-          <input :id="`accommodation-${item.id}-price`" :value="stayPrice(item, item.pricePerNight)" type="number" readonly>
+          <input :id="`accommodation-${item.id}-price`" :value="formatNumber(stayPrice(item, item.pricePerNight))" type="text" inputmode="numeric" readonly>
         </div>
         <div class="record-total">
           <span>{{ accommodationNights(item) }} nights total</span>
@@ -63,15 +63,15 @@
         <div class="additional-price-fields">
           <div class="field">
             <label :for="`accommodation-${item.id}-extra-adult`">Extra Bed Adult</label>
-            <input :id="`accommodation-${item.id}-extra-adult`" :value="stayPrice(item, item.additionalPrices.extraBedAdult)" type="number" readonly>
+            <input :id="`accommodation-${item.id}-extra-adult`" :value="formatNumber(stayPrice(item, item.additionalPrices.extraBedAdult))" type="text" inputmode="numeric" readonly>
           </div>
           <div class="field">
             <label :for="`accommodation-${item.id}-extra-child`">Extra Bed Child</label>
-            <input :id="`accommodation-${item.id}-extra-child`" :value="stayPrice(item, item.additionalPrices.extraBedChild)" type="number" readonly>
+            <input :id="`accommodation-${item.id}-extra-child`" :value="formatNumber(stayPrice(item, item.additionalPrices.extraBedChild))" type="text" inputmode="numeric" readonly>
           </div>
           <div class="field">
             <label :for="`accommodation-${item.id}-child-no-bed`">Child No Bed (Breakfast Only)</label>
-            <input :id="`accommodation-${item.id}-child-no-bed`" :value="stayPrice(item, item.additionalPrices.childNoBed)" type="number" readonly>
+            <input :id="`accommodation-${item.id}-child-no-bed`" :value="formatNumber(stayPrice(item, item.additionalPrices.childNoBed))" type="text" inputmode="numeric" readonly>
           </div>
         </div>
         <div class="price-type-fields">
@@ -83,10 +83,8 @@
             <label :for="`accommodation-${item.id}-price-type-${priceType.key}`">{{ priceType.label }}</label>
             <input
               :id="`accommodation-${item.id}-price-type-${priceType.key}`"
-              :value="oneRoomPrice(item, priceType.key)"
-              type="number"
-              min="0"
-              step="1000"
+              :value="formatNumber(oneRoomPrice(item, priceType.key))"
+              type="text"
               inputmode="numeric"
               readonly
             >
@@ -101,8 +99,9 @@
             <label :for="`accommodation-${item.id}-pax-price-${priceType.key}`">{{ priceType.label }}</label>
             <input
               :id="`accommodation-${item.id}-pax-price-${priceType.key}`"
-              :value="onePaxPrice(item, priceType.key)"
-              type="number"
+              :value="formatNumber(onePaxPrice(item, priceType.key))"
+              type="text"
+              inputmode="numeric"
               readonly
             >
           </div>
@@ -167,7 +166,7 @@
         </div>
         <div class="field activity-price-field">
           <label :for="`activity-${item.id}-price`">Price</label>
-          <input :id="`activity-${item.id}-price`" v-model.number="item.price" type="number" min="0" step="1000" inputmode="numeric" readonly>
+          <input :id="`activity-${item.id}-price`" :value="formatNumber(item.price)" type="text" inputmode="numeric" readonly>
         </div>
         <label class="checkbox-field activity-transport-field" :for="`activity-${item.id}-transport`">
           <input :id="`activity-${item.id}-transport`" v-model="item.includeTransport" type="checkbox">
@@ -231,7 +230,7 @@
         </div>
         <div class="field transport-price-field">
           <label :for="`transport-${item.id}-price`">Price</label>
-          <input :id="`transport-${item.id}-price`" v-model.number="item.price" type="number" min="0" step="1000" inputmode="numeric">
+          <input :id="`transport-${item.id}-price`" :value="formatNumber(item.price)" type="text" inputmode="numeric" @input="updatePrice(item, $event)">
         </div>
         <div class="record-total transport-total-field"><span>Transport price</span><strong>{{ formatCurrency(transportSelling(item)) }}</strong></div>
         <button class="icon-button button-danger transport-delete-field" type="button" @click="$emit('remove-record', 'transport', item.id)">
@@ -269,12 +268,35 @@
         </div>
         <div class="field">
           <label :for="`visa-${item.id}-price`">Auto generated price</label>
-          <input :id="`visa-${item.id}-price`" v-model.number="item.price" type="number" min="0" step="1000" inputmode="numeric" readonly>
+          <input :id="`visa-${item.id}-price`" :value="formatNumber(item.price)" type="text" inputmode="numeric" readonly>
         </div>
         <div class="record-total"><span>VISA price</span><strong>{{ formatCurrency(visaSelling(item)) }}</strong></div>
         <button class="icon-button button-danger" type="button" @click="$emit('remove-record', 'visa', item.id)">
           <Icon name="lucide:trash-2" size="16" />
         </button>
+      </div>
+    </div>
+
+    <div v-if="mode === 'other'" class="other-pax-total">
+      <div class="grand-pax-heading">
+        <h3>Total Price for 1 Pax</h3>
+        <p>Per-person total from Activity, Transportation, and VISA.</p>
+      </div>
+      <div class="field">
+        <label>Activity</label>
+        <div class="grand-pax-value">{{ formatCurrency(activityPaxTotal()) }}</div>
+      </div>
+      <div class="field">
+        <label>Transportation</label>
+        <div class="grand-pax-value">{{ formatCurrency(transportPaxTotal()) }}</div>
+      </div>
+      <div class="field">
+        <label>VISA</label>
+        <div class="grand-pax-value">{{ formatCurrency(visaPaxTotal()) }}</div>
+      </div>
+      <div class="field">
+        <label>Grand Total</label>
+        <div class="grand-pax-value">{{ formatCurrency(otherProductsPaxTotal()) }}</div>
       </div>
     </div>
   </section>
@@ -322,6 +344,16 @@ const regenciesForCountry = (countryId: string) => props.regencyList.filter((ite
 const statesForRegency = (regencyId: string) => props.stateList.filter((item) => item.parentId === regencyId);
 const hotelsForState = (stateId: string) => props.accommodationList.filter((item) => item.stateId === stateId);
 
+const formatNumber = (value: number) => new Intl.NumberFormat("id-ID", {
+  maximumFractionDigits: 0
+}).format(Math.round(Number(value) || 0));
+
+const parsePrice = (value: string) => Number(value.replace(/[^\d]/g, "")) || 0;
+
+const updatePrice = (record: TransportationRecord, event: Event) => {
+  record.price = parsePrice((event.target as HTMLInputElement).value);
+};
+
 const resetLocation = (record: AccommodationRecord, level: "country" | "regency" | "state") => {
   if (level === "country") { record.regencyId = ""; record.stateId = ""; }
   if (level === "regency") record.stateId = "";
@@ -361,6 +393,16 @@ const onePaxPrice = (record: AccommodationRecord, priceType: RoomTypeKey) => {
 const grandPaxTotal = (priceType: RoomTypeKey) => {
   return props.accommodations.reduce((total, record) => total + onePaxPrice(record, priceType), 0);
 };
+
+const activityPaxTotal = () => props.activities.reduce((total, record) => total + props.activitySelling(record), 0);
+const visaPaxTotal = () => props.visas.reduce((total, record) => total + props.visaSelling(record), 0);
+const transportPaxTotal = () => {
+  return props.transportation.reduce((total, record) => {
+    const divisor = Math.max(1, Number(record.totalPax) || 1);
+    return total + Math.round(props.transportSelling(record) / divisor);
+  }, 0);
+};
+const otherProductsPaxTotal = () => activityPaxTotal() + transportPaxTotal() + visaPaxTotal();
 
 const clampAccommodationRange = (record: AccommodationRecord, changedField: "start" | "end") => {
   if (props.totalNights === 0) {

@@ -148,6 +148,16 @@ type PricingTotals = {
   profit: number;
 };
 
+type PricingReviewRow = {
+  key: RoomTypeKey;
+  label: string;
+  accommodationTotal: number;
+  otherProductsTotal: number;
+  baseTotal: number;
+  markup: number;
+  total: number;
+};
+
 const storageKey = "luxbali-centralized-package-builder-v1";
 
 const formatIdr = (value: number) => new Intl.NumberFormat("id-ID", {
@@ -375,6 +385,51 @@ export const useItineraryPackageBuilder = () => {
   const visaSelling = (record: VisaRecord) => visaCost(record);
 
   const priceGroup = (cost: number, selling: number): PricingGroup => ({ cost, selling });
+
+  const accommodationRoomPrice = (record: AccommodationRecord, priceType: RoomTypeKey) => {
+    return amount(record.priceTypePrices[priceType]) * accommodationNights(record);
+  };
+
+  const accommodationPaxPrice = (record: AccommodationRecord, priceType: RoomTypeKey) => {
+    const divisors: Record<RoomTypeKey, number> = {
+      single: 1,
+      double: 2,
+      tripleA: 3,
+      tripleB: 3,
+      childNoBed: 1
+    };
+    return Math.round(accommodationRoomPrice(record, priceType) / divisors[priceType]);
+  };
+
+  const accommodationPaxTotal = (priceType: RoomTypeKey) => {
+    return accommodations.value.reduce((sum, record) => sum + accommodationPaxPrice(record, priceType), 0);
+  };
+
+  const otherProductsPaxTotal = computed(() => {
+    const activityTotal = activities.value.reduce((sum, record) => sum + activitySelling(record), 0);
+    const visaTotal = visas.value.reduce((sum, record) => sum + visaSelling(record), 0);
+    const transportTotal = transportation.value.reduce((sum, record) => {
+      const divisor = Math.max(1, Number(record.totalPax) || 1);
+      return sum + Math.round(transportSelling(record) / divisor);
+    }, 0);
+    return activityTotal + visaTotal + transportTotal;
+  });
+
+  const pricingReviewRows = computed<PricingReviewRow[]>(() => roomTypes.map((priceType) => {
+    const accommodationTotal = accommodationPaxTotal(priceType.key);
+    const otherProductsTotal = otherProductsPaxTotal.value;
+    const baseTotal = accommodationTotal + otherProductsTotal;
+    const markup = baseTotal * (amount(markupPercent.value) / 100);
+    return {
+      key: priceType.key,
+      label: priceType.label,
+      accommodationTotal,
+      otherProductsTotal,
+      baseTotal,
+      markup,
+      total: baseTotal + markup
+    };
+  }));
 
   const totals = computed<PricingTotals>(() => {
     const accommodation = priceGroup(
@@ -751,6 +806,8 @@ export const useItineraryPackageBuilder = () => {
     toastMessage,
     toastVisible,
     totals,
+    pricingReviewRows,
+    otherProductsPaxTotal,
     frontendPackage,
     setTotalDays,
     setTotalNights,
