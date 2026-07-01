@@ -27,6 +27,11 @@
         </div>
       </div>
 
+      <NuxtLink class="button-primary output-preview-link" to="/output">
+        <Icon name="lucide:layout-template" size="18" />
+        <span>Preview Output</span>
+      </NuxtLink>
+
       <div class="actions">
         <button class="button-primary" type="button" @click="$emit('generate')"><Icon name="lucide:file-check-2" size="18" /><span>Generate</span></button>
         <button class="button-secondary" type="button" @click="$emit('copy-json')"><Icon name="lucide:braces" size="18" /><span>JSON</span></button>
